@@ -5,7 +5,7 @@ Vietnamese browser-based cosmetic consultation experiment. Static app, private S
 ## Implemented
 - Consent gate; camera still capture or local image upload.
 - MediaPipe FaceLandmarker 0.10.21 CPU inference with locally hosted task and WASM.
-- A textured 852-triangle facial surface from frontal estimated landmarks.
+- A textured 904-triangle facial surface: 852 MediaPipe face triangles plus 52 photo-textured triangles closing eye and inner-mouth openings.
 - Smooth region-weighted nose bridge/tip/width, chin projection/length, upper/lower lip deformation.
 - Orbit drag, wheel zoom, preset 0/45/90-degree views, wireframe and hold-to-view original.
 - Local reference images at 45/90 degrees, comparison PNG export, clear working memory.
@@ -49,3 +49,7 @@ Mở http://localhost:8080 trên máy đang chạy. `setup` tải Three.js, Medi
 Để thử camera trên iPhone/iPad, host thư mục `dist/` qua HTTPS sau khi setup. HTTP qua IP LAN không đủ điều kiện truy cập camera trực tiếp. Nút chụp bằng camera điện thoại/chọn ảnh là luồng thay thế tùy trình duyệt hỗ trợ.
 
 Mã app: `dist/app.js`. Giao diện: `dist/index.html`, `dist/style.css`. Báo lỗi khởi động: `dist/boot.js`. Không kèm cấu hình định danh hosting Sites, ảnh khách hoặc dữ liệu cá nhân.
+
+## Eye and mouth surface repair
+
+The upstream face tessellation leaves the eyelid and inner-lip loops open. `dist/face-surface.js` closes those three contours using shared boundary vertices and a photo-mapped center per opening. Eyes and mouth use pixels from the original photograph, not generated irises or stock eyeballs. This remains an estimated surface; it does not reconstruct eyeballs, teeth or hidden anatomy. `tests/face-surface.mjs` verifies all 52 former hole-boundary edges become shared edges, UV interpolation, unchanged source points, 468-point compatibility and closed lids. See [repair verification](docs/eye-surface-fix.md).
