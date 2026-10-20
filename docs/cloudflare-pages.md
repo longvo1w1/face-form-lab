@@ -32,6 +32,8 @@ Prefer the `face-form-lab` project. Check any existing project's repository/buil
 npx wrangler pages project create face-form-lab --production-branch main
 ```
 
+Wrangler 4.151.2 may delegate creation of a new project to Workers. For this explicitly Pages deployment, `--force` was needed **only on project creation** to create the Pages project directly. Once the Pages project exists, use normal `pages deploy` commands without `--force`. The first delegated attempt failed before creating or deploying anything.
+
 ## Deploy
 
 Direct Upload uploads prebuilt files and does not run a remote build. Run the preparation above, commit/push source/configuration, then deploy from that clean commit:
