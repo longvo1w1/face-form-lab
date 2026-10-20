@@ -53,3 +53,7 @@ Mã app: `dist/app.js`. Giao diện: `dist/index.html`, `dist/style.css`. Báo l
 ## Eye and mouth surface repair
 
 The upstream face tessellation leaves the eyelid and inner-lip loops open. `dist/face-surface.js` closes those three contours using shared boundary vertices and a photo-mapped center per opening. Eyes and mouth use pixels from the original photograph, not generated irises or stock eyeballs. This remains an estimated surface; it does not reconstruct eyeballs, teeth or hidden anatomy. `tests/face-surface.mjs` verifies all 52 former hole-boundary edges become shared edges, UV interpolation, unchanged source points, 468-point compatibility and closed lids. See [repair verification](docs/eye-surface-fix.md).
+
+## Cloudflare Pages demo
+
+See [deployment and HTTPS verification](docs/cloudflare-pages.md). Publish `dist`; run `npm ci && npm run setup && npm run check` before uploading because `dist/assets` is ignored. The repository includes Pages MIME/404 configuration and tests that accept `TEST_BASE_URL` for checking a real hosted origin.

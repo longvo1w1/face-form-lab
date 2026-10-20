@@ -6,6 +6,7 @@ import {execFileSync} from 'node:child_process';
 await mkdir('artifacts', {recursive:true});
 let portrait;try{portrait=await readFile('artifacts/portrait.jpg')}catch{const response=await fetch('https://storage.googleapis.com/mediapipe-assets/portrait.jpg');assert(response.ok);portrait=Buffer.from(await response.arrayBuffer());await writeFile('artifacts/portrait.jpg',portrait)}
 assert.equal(createHash('sha256').update(portrait).digest('hex'),'a6f11efaa834706db23f275b6115058fa87fc7f14362681e6abe14e82749de3e');
+const baseURL=(process.env.TEST_BASE_URL||'http://localhost:8080').replace(/\/$/,'');
 const browser=await chromium.launch({headless:true,executablePath:process.env.BROWSER_EXECUTABLE,args:['--use-fake-device-for-media-stream','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 console.log('Chromium launched');
 const page=await browser.newPage({viewport:{width:1024,height:1366}});
@@ -18,15 +19,15 @@ try {
  const baseline=await browser.newPage();
  for(const file of ['index.html','app.js']){
    const body=execFileSync('git',['show',`0cf9315:dist/${file}`],{encoding:'utf8'});
-   await baseline.route(file==='index.html'?'http://localhost:8080/':'**/app.js?*',route=>route.fulfill({body,contentType:file.endsWith('.js')?'text/javascript':'text/html'}));
+   await baseline.route(file==='index.html'?baseURL+'/':'**/app.js?*',route=>route.fulfill({body,contentType:file.endsWith('.js')?'text/javascript':'text/html'}));
  }
- await baseline.goto('http://localhost:8080');await baseline.waitForFunction(()=>window.faceFormReady);
+ await baseline.goto(baseURL);await baseline.waitForFunction(()=>window.faceFormReady);
  await baseline.locator('#consent').check();await baseline.locator('#upload').setInputFiles('artifacts/portrait.jpg');
  await baseline.locator('#selectedPreview').waitFor({state:'visible'});await baseline.locator('#consent').uncheck();
  assert(await baseline.locator('#selectedPreview').isVisible());console.log('REPRO baseline: consent revoked but customer preview remains');
  await baseline.close();
  console.log('page created');
- await page.goto('http://localhost:8080');
+ await page.goto(baseURL);
  await page.waitForFunction(()=>window.faceFormReady);console.log('app ready');
  assert(await page.locator('#upload').isDisabled());
  await page.locator('#consent').check();
@@ -112,7 +113,7 @@ try {
  // Wait for module creation to settle; no old build may recreate the surface.
  await page.waitForTimeout(1000);assert.equal(await page.locator('#stage canvas').count(),0);
  assert.deepEqual(errors,[]);
- const network=requests.filter(r=>/^https?:/.test(r.url));console.log('Local HTTP requests:',network.length);assert(network.every(r=>r.method==='GET'&&new URL(r.url).hostname==='localhost'));
- for(const [path,type] of [['assets/vision.mjs','text/javascript'],['assets/wasm/vision_wasm_internal.wasm','application/wasm'],['assets/face_landmarker.task','application/octet-stream']]){const response=await page.request.head('http://localhost:8080/'+path);assert.equal(response.status(),200);assert(response.headers()['content-type'].startsWith(type))}
+ const network=requests.filter(r=>/^https?:/.test(r.url));console.log('Local HTTP requests:',network.length);assert(network.every(r=>r.method==='GET'&&new URL(r.url).origin===new URL(baseURL).origin));
+ for(const [path,type] of [['assets/vision.mjs','text/javascript'],['assets/wasm/vision_wasm_internal.wasm','application/wasm'],['assets/face_landmarker.task','application/octet-stream']]){const response=await page.request.head(baseURL+'/'+path);assert.equal(response.status(),200);assert(response.headers()['content-type'].startsWith(type))}
  console.log('PASS: real Chromium inference, rendering, edits, undo, 3 angles, original, reset, PNG export, clear, invalid/no-face/model-failure recovery, consent cancellation, MIME; local GET requests only. Camera tests use controlled adapters, not physical devices.');
 }catch(e){console.log('errors',errors,'status',await page.locator('#status').textContent());await page.screenshot({path:'artifacts/failure.png',fullPage:true});throw e}finally{await browser.close()}

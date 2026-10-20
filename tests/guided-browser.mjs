@@ -1,12 +1,13 @@
 import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
 import {writeFile,mkdir,readFile} from 'node:fs/promises';
+const baseURL=(process.env.TEST_BASE_URL||'http://localhost:8080').replace(/\/$/,'');
 const browser=await chromium.launch({headless:true,executablePath:process.env.BROWSER_EXECUTABLE,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const page=await browser.newPage({viewport:{width:1024,height:1366}}),errors=[];
 page.on('pageerror',e=>errors.push(e.message));
 try{
  await page.route('**/qa-portrait.jpg',async route=>route.fulfill({body:await readFile('artifacts/portrait.jpg'),contentType:'image/jpeg'}));
- await page.goto('http://localhost:8080');await page.waitForFunction(()=>window.faceFormReady);
+ await page.goto(baseURL);await page.waitForFunction(()=>window.faceFormReady);
  await page.locator('#consent').check();
  const report=await page.evaluate(async()=>{
   const {CaptureAnalyzer}=await import('./capture-analyzer.js');const {assess}=await import('./capture-quality.js');

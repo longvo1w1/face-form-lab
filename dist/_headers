@@ -1,0 +1,11 @@
+/*
+  X-Content-Type-Options: nosniff
+
+/assets/vision.mjs
+  Content-Type: text/javascript; charset=utf-8
+
+/assets/face_landmarker.task
+  Content-Type: application/octet-stream
+
+/assets/wasm/*.wasm
+  Content-Type: application/wasm
