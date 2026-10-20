@@ -16,6 +16,11 @@ Not a depth scan, complete head reconstruction, multi-view fusion, surgical pred
 ## Validation
 See [browser QA and remaining device checks](docs/qa.md). Real Chromium now runs the local model/WASM, detects 478 landmarks on the public MediaPipe portrait, renders and deforms the actual mesh, and downloads a comparison PNG. Physical camera, native iOS pickers and Safari remain device-unverified.
 
+## AI guided capture
+Front → customer's left 45° → customer's right 45°, with per-photo review/retake and optional manual 90° reference. A local worker runs FaceLandmarker VIDEO/matrices for live guidance; library/native-camera photos are checked after receipt. Brightness and blur are pixel heuristics. Configurable trial thresholds, stability progress/countdown, cancellation and manual capture are included. Photos/original blobs and quality metadata stay in session memory. Only the front image reconstructs the existing surface; there is no multi-view fusion or identity recognition.
+
+See [implementation, measured thresholds and device limitations](docs/guided-capture.md). `npm test` runs unit tests plus actual Chromium IMAGE/VIDEO inference and countdown/capture UI tests. Thresholds and physical selfie left/right still need validation across real people/devices; passing the trial rules is not a guarantee of reconstruction quality.
+
 ## Local preview
 Serve dist using an HTTP server. Camera requires HTTPS or localhost. MediaPipe inference requires supported WebAssembly; rendering requires WebGL. No remote CDN is required at runtime.
 
