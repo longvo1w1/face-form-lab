@@ -39,8 +39,8 @@ try {
  await page.locator('#snap').waitFor({state:'visible'});
  await page.waitForFunction(()=>!document.querySelector('#snap').disabled);
  await page.locator('#snap').click();
- assert(await page.locator('#selectedPreview').isVisible());
- assert(await page.locator('#snap').isDisabled());
+ await page.locator('#selectedPreview').waitFor({state:'visible'});
+ await page.waitForFunction(()=>!document.querySelector('#build').disabled);await page.locator('#camera').click();assert(await page.locator('#snap').isDisabled());
  await page.locator('#upload').setInputFiles('artifacts/portrait.jpg');
  await page.locator('#selectedPreview').waitFor({state:'visible'});
  assert.equal(await page.locator('#stage canvas').count(),0);
@@ -84,6 +84,7 @@ try {
  await page.locator('#upload').dispatchEvent('cancel');
  assert(await page.locator('#selectedPreview').isVisible());
  await page.locator('#captureAngle').selectOption('profile');
+ await page.locator('#upload').setInputFiles({name:'blank.png',mimeType:'image/png',buffer:Buffer.from(blank,'base64')});
  await page.locator('#build').click();
  await page.locator('[data-ref="profile"]').click();
  assert(await page.locator('#reference').isVisible());await page.locator('#closeRef').click();
@@ -111,7 +112,7 @@ try {
  // Wait for module creation to settle; no old build may recreate the surface.
  await page.waitForTimeout(1000);assert.equal(await page.locator('#stage canvas').count(),0);
  assert.deepEqual(errors,[]);
- const network=requests.filter(r=>/^https?:/.test(r.url));console.log('network',network);assert(network.every(r=>r.method==='GET'&&new URL(r.url).hostname==='localhost'));
+ const network=requests.filter(r=>/^https?:/.test(r.url));console.log('Local HTTP requests:',network.length);assert(network.every(r=>r.method==='GET'&&new URL(r.url).hostname==='localhost'));
  for(const [path,type] of [['assets/vision.mjs','text/javascript'],['assets/wasm/vision_wasm_internal.wasm','application/wasm'],['assets/face_landmarker.task','application/octet-stream']]){const response=await page.request.head('http://localhost:8080/'+path);assert.equal(response.status(),200);assert(response.headers()['content-type'].startsWith(type))}
  console.log('PASS: real Chromium inference, rendering, edits, undo, 3 angles, original, reset, PNG export, clear, invalid/no-face/model-failure recovery, consent cancellation, MIME; local GET requests only. Camera tests use controlled adapters, not physical devices.');
 }catch(e){console.log('errors',errors,'status',await page.locator('#status').textContent());await page.screenshot({path:'artifacts/failure.png',fullPage:true});throw e}finally{await browser.close()}

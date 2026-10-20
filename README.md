@@ -5,7 +5,7 @@ Vietnamese browser-based cosmetic consultation experiment. Static app, private S
 ## Implemented
 - Consent gate; camera still capture or local image upload.
 - MediaPipe FaceLandmarker 0.10.21 CPU inference with locally hosted task and WASM.
-- A textured 852-triangle facial surface from frontal estimated landmarks.
+- A textured 904-triangle facial surface: 852 MediaPipe face triangles plus 52 photo-textured triangles closing eye and inner-mouth openings.
 - Smooth region-weighted nose bridge/tip/width, chin projection/length, upper/lower lip deformation.
 - Orbit drag, wheel zoom, preset 0/45/90-degree views, wireframe and hold-to-view original.
 - Local reference images at 45/90 degrees, comparison PNG export, clear working memory.
@@ -15,6 +15,11 @@ Not a depth scan, complete head reconstruction, multi-view fusion, surgical pred
 
 ## Validation
 See [browser QA and remaining device checks](docs/qa.md). Real Chromium now runs the local model/WASM, detects 478 landmarks on the public MediaPipe portrait, renders and deforms the actual mesh, and downloads a comparison PNG. Physical camera, native iOS pickers and Safari remain device-unverified.
+
+## AI guided capture
+Front → customer's left 45° → customer's right 45°, with per-photo review/retake and optional manual 90° reference. A local worker runs FaceLandmarker VIDEO/matrices for live guidance; library/native-camera photos are checked after receipt. Brightness and blur are pixel heuristics. Configurable trial thresholds, stability progress/countdown, cancellation and manual capture are included. Photos/original blobs and quality metadata stay in session memory. Only the front image reconstructs the existing surface; there is no multi-view fusion or identity recognition.
+
+See [implementation, measured thresholds and device limitations](docs/guided-capture.md). `npm test` runs unit tests plus actual Chromium IMAGE/VIDEO inference and countdown/capture UI tests. Thresholds and physical selfie left/right still need validation across real people/devices; passing the trial rules is not a guarantee of reconstruction quality.
 
 ## Local preview
 Serve dist using an HTTP server. Camera requires HTTPS or localhost. MediaPipe inference requires supported WebAssembly; rendering requires WebGL. No remote CDN is required at runtime.
@@ -44,3 +49,7 @@ Mở http://localhost:8080 trên máy đang chạy. `setup` tải Three.js, Medi
 Để thử camera trên iPhone/iPad, host thư mục `dist/` qua HTTPS sau khi setup. HTTP qua IP LAN không đủ điều kiện truy cập camera trực tiếp. Nút chụp bằng camera điện thoại/chọn ảnh là luồng thay thế tùy trình duyệt hỗ trợ.
 
 Mã app: `dist/app.js`. Giao diện: `dist/index.html`, `dist/style.css`. Báo lỗi khởi động: `dist/boot.js`. Không kèm cấu hình định danh hosting Sites, ảnh khách hoặc dữ liệu cá nhân.
+
+## Eye and mouth surface repair
+
+The upstream face tessellation leaves the eyelid and inner-lip loops open. `dist/face-surface.js` closes those three contours using shared boundary vertices and a photo-mapped center per opening. Eyes and mouth use pixels from the original photograph, not generated irises or stock eyeballs. This remains an estimated surface; it does not reconstruct eyeballs, teeth or hidden anatomy. `tests/face-surface.mjs` verifies all 52 former hole-boundary edges become shared edges, UV interpolation, unchanged source points, 468-point compatibility and closed lids. See [repair verification](docs/eye-surface-fix.md).
