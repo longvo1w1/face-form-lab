@@ -14,7 +14,7 @@ Vietnamese browser-based cosmetic consultation experiment. Static app, private S
 Not a depth scan, complete head reconstruction, multi-view fusion, surgical prediction, or metric/clinical measurement. Side views expose missing and uncertain regions. Frontal view is required for reconstruction; side photos are visual references only. No patient identity, durable records, medical records, server image uploads, or sharing workflow. Runtime errors are displayed in Vietnamese.
 
 ## Validation
-JavaScript syntax checked. Imported actual vision module and verified all tessellation edge triples form 852 triangles, max vertex index 467. Confirmed vendored model and WASM assets exist. Managed browser QA blocked by browser URL policy; real camera permission, inference, renderer, mobile layout and export remain device-unverified.
+See [browser QA and remaining device checks](docs/qa.md). Real Chromium now runs the local model/WASM, detects 478 landmarks on the public MediaPipe portrait, renders and deforms the actual mesh, and downloads a comparison PNG. Physical camera, native iOS pickers and Safari remain device-unverified.
 
 ## Local preview
 Serve dist using an HTTP server. Camera requires HTTPS or localhost. MediaPipe inference requires supported WebAssembly; rendering requires WebGL. No remote CDN is required at runtime.
