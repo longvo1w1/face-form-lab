@@ -1,3 +1,4 @@
+import {mapBounds,checkFraming} from './capture-framing.js';
 // Geometry/model output and pixel heuristics are deliberately separate.
 export const DEFAULTS = Object.freeze({yawTolerance:12,pitchTolerance:14,rollTolerance:10,
  minFace:.38,maxFace:.82,centerTolerance:.16,minBrightness:55,maxBrightness:225,
@@ -30,14 +31,16 @@ export function pixelMetrics({data,width,height}){
  }
  return {brightness:total/gray.length,sharpness:n?sq/n-(sum/n)**2:0};
 }
-export function assess(result,pixels,step='front',config=DEFAULTS){
+export function assess(result,pixels,step='front',config=DEFAULTS,frame=null){
  const c={...DEFAULTS,...config},count=result.faceLandmarks?.length||0;
- const bounds=count===1?faceBounds(result.faceLandmarks[0]):null;
+ const sourceBounds=count===1?faceBounds(result.faceLandmarks[0]):null;
+ const bounds=sourceBounds?mapBounds(sourceBounds,frame||undefined):null;
  const pose=count===1?poseFromMatrix(result.facialTransformationMatrixes?.[0]):null;
- const metrics={...pixels,count,bounds,pose};
+ const metrics={...pixels,count,bounds,sourceBounds,pose};
  const fail=(code,message)=>({ok:false,code,message,...metrics});
  if(!count)return fail('no-face','Đưa khuôn mặt vào khung; nếu góc ngang mất điểm mốc, có thể lưu đối chiếu thủ công.');
  if(count>1)return fail('multiple','Chỉ để một người trong khung.');
+ if(bounds&&frame){const framing=checkFraming(bounds,{mirrored:true});if(!framing.ok)return fail(framing.code,framing.message)}
  if(!bounds||bounds.x<0||bounds.y<0||bounds.right>1||bounds.bottom>1||Math.abs(bounds.cx-.5)>c.centerTolerance||Math.abs(bounds.cy-.5)>c.centerTolerance)return fail('position','Đưa khuôn mặt vào giữa khung oval.');
  if(bounds.height<c.minFace)return fail('near','Tiến gần camera hơn.');
  if(bounds.height>c.maxFace)return fail('far','Lùi xa camera một chút.');

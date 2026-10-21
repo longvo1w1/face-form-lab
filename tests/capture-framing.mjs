@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {visibleFrame,mapBounds,checkFraming,HintFilter} from '../dist/capture-framing.js';
+const landscape=visibleFrame(1280,720,200,200);assert.equal(landscape.width,720/1280);assert.equal(landscape.height,1);
+const face={x:.22,y:.2,width:.56,height:.6,right:.78,bottom:.8,cx:.5,cy:.5};
+assert.equal(checkFraming(mapBounds(face,landscape)).code,'frame-close','source has room but cover crops the face');
+const full={x:.3,y:.2,width:.4,height:.6,right:.7,bottom:.8,cx:.5,cy:.5};assert(checkFraming(full).ok);
+assert.equal(checkFraming({...full,y:.02}).code,'frame-top');
+assert.equal(checkFraming({...full,bottom:1}).code,'frame-chin');
+assert.equal(checkFraming({...full,x:0}).code,'frame-side');
+assert.match(checkFraming({...full,x:0},{mirrored:true}).message,/sang trái của bạn/);
+assert.match(checkFraming({...full,right:1},{mirrored:true}).message,/sang phải của bạn/);
+const portrait=visibleFrame(720,1280,300,200);assert(portrait.height<1);assert.equal(portrait.width,1);
+const filter=new HintFilter(500),a={code:'top',message:'top'},b={code:'chin',message:'chin'};
+assert.equal(filter.update(a,0).code,'top');assert.equal(filter.update(b,100).code,'top');assert.equal(filter.update(b,601).code,'chin');filter.reset();assert.equal(filter.update(a,900).code,'top');
+console.log('PASS: cover crop, portrait/landscape, forehead/chin/sides, mirrored directions and instruction debounce.');

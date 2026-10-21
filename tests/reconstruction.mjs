@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {validateDenseMesh,ReconstructionChoice} from '../dist/reconstruction.js';
+const vertices=Array.from({length:468},(_,i)=>({x:i/468,y:.5,z:0}));
+const fixture={engine:'3ddfa-v2',coordinateSystem:'normalized-image-mediapipe-z',vertices,triangles:[0,1,2]};
+assert.equal(validateDenseMesh(fixture).points.length,468);
+for(const bad of [{...fixture,engine:'unknown'},{...fixture,triangles:[0,1,468]},{...fixture,triangles:[0,1,1.2]},{...fixture,vertices:[...vertices.slice(1),{x:NaN,y:0,z:0}]},{...fixture,vertices:[] }])assert.throws(()=>validateDenseMesh(bad));
+const choice=new ReconstructionChoice();let sends=0;globalThis.fetch=async()=>{sends++;throw Error('should not send')};
+assert.equal(await choice.reconstruct({},[]),null);assert.equal(sends,0,'local mode never uploads');
+choice.mode='dense';await assert.rejects(choice.reconstruct({},[]),/xác nhận riêng/);assert.equal(sends,0,'no separate consent: no upload');
+choice.checkbox={checked:true,parentElement:{hidden:false}};choice.endpoint='https://example.invalid';
+let activeSignal;globalThis.fetch=async(_url,options)=>{sends++;activeSignal=options.signal;return await new Promise((resolve,reject)=>activeSignal.addEventListener('abort',()=>reject(new Error('cancelled'))))};
+const pending=choice.reconstruct({toDataURL(){return 'data:image/jpeg;base64,abc'}},[{x:.2,y:.2},{x:.8,y:.8}]);
+choice.clear();await assert.rejects(pending,/cancelled/);assert.equal(activeSignal.aborted,true);assert.equal(choice.checkbox.checked,false);assert.equal(choice.mode,'local');
+console.log('PASS: dense geometry validation, local default/no upload, separate transmission consent, clear aborts request and revokes consent. Inference is not simulated as model verification.');

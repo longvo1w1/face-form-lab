@@ -1,3 +1,4 @@
+import {visibleFrame,HintFilter} from './capture-framing.js';
 import {CaptureAnalyzer} from './capture-analyzer.js';
 import {DEFAULTS,STEPS,assess,CaptureGate} from './capture-quality.js';
 const order=['front','left','right'];
@@ -5,7 +6,7 @@ const fields={yawTolerance:['Sai số yaw (°)',3,30],pitchTolerance:['Pitch t�
 export class GuidedCapture {
  constructor({onReview,onAutoCapture,onState}){
   this.onReview=onReview;this.onAutoCapture=onAutoCapture;this.onState=onState;
-  this.config={...DEFAULTS};this.records=new Map();this.step='front';this.gate=new CaptureGate();this.analyzer=new CaptureAnalyzer();this.generation=0;this.sessionGeneration=0;this.live=false;this.processing=false;this.photoRequest=0;
+  this.hintFilter=new HintFilter();this.config={...DEFAULTS};this.records=new Map();this.step='front';this.gate=new CaptureGate();this.analyzer=new CaptureAnalyzer();this.generation=0;this.sessionGeneration=0;this.live=false;this.processing=false;this.photoRequest=0;
   const panel=document.createElement('section');panel.id='guided';
   panel.innerHTML=`<h3>Hướng dẫn chụp ba góc</h3><p class="muted">Nhận diện vị trí/góc mặt, không nhận dạng danh tính. Trái/phải là của khách. Camera selfie chỉ lật phần xem trước; ảnh lưu không lật.</p><div id="guidedSteps" class="guided-steps"></div><p id="guideHint" role="status">Chọn chính diện để bắt đầu.</p><progress id="guideProgress" max="1" value="0" aria-label="Tiến trình giữ yên và đếm ngược"></progress><label class="consent"><input id="autoCapture" type="checkbox" checked> Tự chụp khi giữ ổn định</label><button id="retake" type="button" disabled>Chụp lại góc này</button><button id="nextCapture" type="button" disabled>Góc tiếp theo</button><p id="qualitySummary"></p><p class="muted">Ngưỡng thử nghiệm, chưa xác nhận trên iPhone/iPad. Độ sáng/nhòe là kiểm tra ảnh theo quy tắc, có thể sai. Thu đủ ảnh không đồng nghĩa quét 3D nhiều góc; hiện chỉ dựng từ chính diện.</p><details><summary>Hiệu chỉnh ngưỡng thử nghiệm</summary><form id="captureSettings"></form><button id="applyCaptureSettings" type="button">Áp dụng ngưỡng</button><p id="settingsError" role="status"></p></details>`;
   document.querySelector('#cameraBox').before(panel);this.panel=panel;
@@ -31,13 +32,13 @@ export class GuidedCapture {
   panel.querySelector('#autoCapture').onchange=()=>{this.gate.reset();this.progress(0);this.hint(panel.querySelector('#autoCapture').checked?'Đã bật tự chụp; giữ yên khi được hướng dẫn.':'Đã hủy tự chụp. Có thể chụp thủ công.')};
   panel.querySelector('#retake').onclick=()=>{this.records.delete(this.step);this.select(this.step);this.hint('Đã bỏ ảnh góc này. Chụp hoặc chọn ảnh mới.');};
   panel.querySelector('#nextCapture').onclick=()=>{const missing=order.find(k=>!this.records.has(k));if(missing)this.select(missing)};
-  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.id='captureOval';svg.setAttribute('aria-hidden','true');svg.innerHTML='<ellipse cx="320" cy="240" rx="125" ry="190"/>';document.querySelector('#cameraBox').append(svg);this.oval=svg;svg.setAttribute('hidden','');
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.id='captureOval';svg.setAttribute('aria-hidden','true');svg.setAttribute('viewBox','0 0 100 100');svg.setAttribute('preserveAspectRatio','none');svg.innerHTML='<defs><mask id="faceGuideMask"><rect width="100" height="100" fill="white"/><ellipse cx="50" cy="50" rx="38" ry="42" fill="black"/></mask></defs><rect class="guide-shade" width="100" height="100" mask="url(#faceGuideMask)"/><ellipse class="guide-border" cx="50" cy="50" rx="38" ry="42"/><path class="guide-eye-line" d="M 21 43 H 79"/><text class="guide-angle" x="50" y="94" text-anchor="middle">Nhìn thẳng</text>';document.querySelector('#cameraBox').append(svg);this.oval=svg;svg.setAttribute('hidden','');
   document.addEventListener('visibilitychange',()=>{this.gate.reset();this.progress(0)});
   this.render();
  }
  hint(message){this.panel.querySelector('#guideHint').textContent=message}
  progress(value){this.panel.querySelector('#guideProgress').value=value}
- select(step){if(!STEPS[step]||this.locked)return;this.step=step;this.photoRequest++;this.photoBusy=false;this.onState(false);this.gate.reset();this.progress(0);this.onReview(this.records.get(step)||null,step);this.render();const record=this.records.get(step);this.hint(record?(record.quality.ok?'Ảnh qua ngưỡng thử nghiệm; vẫn cần nhân viên xem lại.':`Cần xem lại/chụp lại: ${record.quality.message}`):`Chuẩn bị: ${STEPS[step].label}.`);if(this.live)this.start(this.video)}
+ select(step){if(!STEPS[step]||this.locked)return;this.step=step;this.photoRequest++;this.photoBusy=false;this.onState(false);this.gate.reset();this.progress(0);this.onReview(this.records.get(step)||null,step);this.render();const record=this.records.get(step);this.hint(record?(record.quality.ok?'Ảnh qua ngưỡng thử nghiệm; vẫn cần nhân viên xem lại.':`Cần xem lại/chụp lại: ${record.quality.message}`):`Chuẩn bị: ${STEPS[step].label}.`);this.hintFilter.reset();if(this.live)this.start(this.video)}
  setLocked(locked){this.locked=locked;for(const b of this.panel.querySelectorAll('[data-step]'))b.disabled=locked;this.panel.querySelector('#retake').disabled=locked||!this.records.has(this.step);this.panel.querySelector('#nextCapture').disabled=locked||!this.records.has(this.step)||order.every(k=>this.records.has(k))}
  render(){
   for(const b of this.panel.querySelectorAll('[data-step]')){
@@ -65,7 +66,7 @@ export class GuidedCapture {
    return record;
   }finally{if(generation===this.sessionGeneration&&request===this.photoRequest){this.photoBusy=false;this.onState(false)}}
  }
- start(video){this.stop();this.video=video;this.lastVideoTime=-1;this.live=true;const generation=this.generation;this.oval.removeAttribute('hidden');this.hint('Đang chuẩn bị hướng dẫn realtime…');
+ start(video){this.stop();this.video=video;this.lastVideoTime=-1;this.live=true;const generation=this.generation;this.oval.removeAttribute('hidden');this.hintFilter.reset();this.oval.dataset.quality='adjust';this.hint('Đưa toàn bộ khuôn mặt vào oval, để trống phía trên trán và dưới cằm.');
   const loop=async()=>{
    if(!this.live||generation!==this.generation)return;
    let delay=this.config.intervalMs;
@@ -74,15 +75,19 @@ export class GuidedCapture {
     this.lastVideoTime=video.currentTime;
     try{
      const step=this.step;
-     const w=video.videoWidth,h=video.videoHeight;this.oval.setAttribute('viewBox',`0 0 ${w} ${h}`);const ellipse=this.oval.firstElementChild;ellipse.setAttribute('cx',w/2);ellipse.setAttribute('cy',h/2);ellipse.setAttribute('rx',w*.25);ellipse.setAttribute('ry',h*.4);
+     const rect=video.getBoundingClientRect();const frame=visibleFrame(video.videoWidth,video.videoHeight,rect.width,rect.height);
+     this.oval.querySelector('.guide-angle').textContent=this.step==='front'?'Nhìn thẳng':this.step==='profile'?'Ngang · đối chiếu':this.step==='left'?'Quay trái của bạn · 45°':'Quay phải của bạn · 45°';
      const data=await this.analyzer.analyze(video,'VIDEO');delay=Math.max(delay,data.duration*2);
      if(!this.live||generation!==this.generation||step!==this.step)return;
-     const quality=assess(data.result,data.pixels,step,this.config);
-     const state=this.gate.update(quality,performance.now(),this.config);this.progress(state.progress);this.hint(state.message||quality.message);
+     const quality=assess(data.result,data.pixels,step,this.config,frame);
+     const now=performance.now();const state=this.gate.update(quality,now,this.config);this.progress(state.progress);
+     this.oval.dataset.quality=quality.ok?'ready':'adjust';
+     const instruction=this.hintFilter.update(quality,now);
+     this.hint(quality.ok?(state.message||'Đủ khung mặt — giữ yên để chụp.'):instruction.message);
      this.lastQuality=quality;
      if(state.capture&&this.panel.querySelector('#autoCapture').checked){this.processing=false;await this.onAutoCapture()}
      else if(!this.panel.querySelector('#autoCapture').checked){this.gate.reset();this.progress(0)}
-    }catch(e){if(generation===this.generation){this.gate.reset();this.progress(0);this.hint('Không có hướng dẫn realtime: '+e.message+' Dùng chụp thủ công/chọn ảnh để kiểm tra sau.');delay=2000}}
+    }catch(e){if(generation===this.generation){this.oval.dataset.quality='adjust';this.gate.reset();this.progress(0);this.hint('Không có hướng dẫn realtime: '+e.message+' Dùng chụp thủ công/chọn ảnh để kiểm tra sau.');delay=2000}}
     finally{if(generation===this.generation)this.processing=false}
    }else if(!this.records.has(this.step)){this.gate.reset();this.progress(0)}
    if(this.live&&generation===this.generation)this.timer=setTimeout(loop,delay);

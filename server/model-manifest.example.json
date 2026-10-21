@@ -1,0 +1,10 @@
+{
+  "deployment_rights_confirmed": false,
+  "rights_reference": "Provide your model/weights deployment license reference here",
+  "files": {
+    "regressor": {"path": "models/mb1_120x120.onnx", "sha256": "REPLACE_WITH_VERIFIED_SHA256"},
+    "bfm": {"path": "models/bfm_noneck_v3.pkl", "sha256": "REPLACE_WITH_VERIFIED_SHA256"},
+    "triangles": {"path": "models/tri.pkl", "sha256": "REPLACE_WITH_VERIFIED_SHA256"},
+    "normalization": {"path": "models/param_mean_std_62d_120x120.pkl", "sha256": "REPLACE_WITH_VERIFIED_SHA256"}
+  }
+}

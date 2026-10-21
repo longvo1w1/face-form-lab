@@ -57,3 +57,9 @@ The upstream face tessellation leaves the eyelid and inner-lip loops open. `dist
 ## Cloudflare Pages demo
 
 See [deployment and HTTPS verification](docs/cloudflare-pages.md). Publish `dist`; run `npm ci && npm run setup && npm run check` before uploading because `dist/assets` is ignored. The repository includes Pages MIME/404 configuration and tests that accept `TEST_BASE_URL` for checking a real hosted origin.
+
+## Capture framing and optional dense reconstruction
+
+The camera guide now checks the visible `object-fit: cover` crop, reserves forehead/chin room, gives mirrored left/right placement directions and shows amber/green framing plus an eye-height line. Brightness/blur remain local pixel heuristics. `npm run test:unit` covers geometry, framing, quality and the reconstruction contract.
+
+An optional 3DDFA_V2 CPU/OpenCV/ONNX backend and Three.js dense-mesh adapter are included, **disabled by default**. Actual dense inference awaits authorized BFM/weights and verification. No model binaries are included; enabling it also requires a separate customer consent naming the image destination. See [setup, upstream license restriction and executed checks](docs/reconstruction-engine.md).
