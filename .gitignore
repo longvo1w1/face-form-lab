@@ -8,3 +8,9 @@ artifacts/
 
 .wrangler/
 .dev.vars
+
+__pycache__/
+*.pyc
+.venv/
+server/models/
+server/model-manifest.json

@@ -9,10 +9,11 @@
   "scripts": {
     "setup": "node scripts/prepare-assets.mjs",
     "start": "node scripts/serve.mjs",
-    "check": "node --check dist/app.js && node --check dist/boot.js && node --check scripts/prepare-assets.mjs && node --check scripts/serve.mjs && node --check dist/capture-quality.js && node --check dist/capture-worker.js && node --check dist/capture-analyzer.js && node --check dist/guided-capture.js && node --check dist/face-surface.js && node --check scripts/check-deployment.mjs",
-    "test": "node tests/face-surface.mjs && node tests/capture-quality.mjs && node tests/browser.mjs && node tests/guided-browser.mjs",
+    "check": "node --check dist/app.js && node --check dist/boot.js && node --check scripts/prepare-assets.mjs && node --check scripts/serve.mjs && node --check dist/capture-quality.js && node --check dist/capture-worker.js && node --check dist/capture-analyzer.js && node --check dist/guided-capture.js && node --check dist/face-surface.js && node --check scripts/check-deployment.mjs && node --check dist/capture-framing.js && node --check dist/reconstruction.js",
+    "test": "npm run test:unit && node tests/browser.mjs && node tests/guided-browser.mjs",
     "deploy:pages": "npm run setup && npm run check && wrangler pages deploy dist --project-name face-form-lab --branch main",
-    "check:deployment": "node scripts/check-deployment.mjs"
+    "check:deployment": "node scripts/check-deployment.mjs",
+    "test:unit": "node tests/face-surface.mjs && node tests/capture-quality.mjs && node tests/capture-framing.mjs && node tests/reconstruction.mjs"
   },
   "devDependencies": {
     "playwright": "^1.64.1",
