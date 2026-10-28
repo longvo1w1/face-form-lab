@@ -1,3 +1,4 @@
+import {prioritizeCosmetics} from './consultation-layout.js';
 import {simplifyCapture} from './capture-flow.js';
 import {freshCosmetics,clone,CosmeticTexture} from './cosmetics.js';
 import {mountCosmetics} from './cosmetics-panel.js';
@@ -72,3 +73,5 @@ cosmeticPanel=mountCosmetics($('#cosmetics'),{getState:()=>cosmetics,before:reme
 }});
 
 simplifyCapture(document.querySelector(".capture"));
+
+prioritizeCosmetics();
