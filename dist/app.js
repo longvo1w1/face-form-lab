@@ -1,3 +1,4 @@
+import {simplifyCapture} from './capture-flow.js';
 import {freshCosmetics,clone,CosmeticTexture} from './cosmetics.js';
 import {mountCosmetics} from './cosmetics-panel.js';
 let cosmetics=freshCosmetics(),cosmeticTexture,cosmeticPanel,proposals={};
@@ -69,3 +70,5 @@ cosmeticPanel=mountCosmetics($('#cosmetics'),{getState:()=>cosmetics,before:reme
  else if(proposals[slot]){remember();restore(proposals[slot]);$('#proposalStatus').textContent='Đang xem phương án '+slot+'. Góc nhìn được giữ nguyên.';}
  else $('#proposalStatus').textContent='Chưa lưu phương án '+slot+'.';
 }});
+
+simplifyCapture(document.querySelector(".capture"));
