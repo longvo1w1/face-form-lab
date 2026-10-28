@@ -18,7 +18,8 @@ export function simplifyCapture(root){
  const note=node('p','Ảnh nghiêng chỉ để đối chiếu; không bắt buộc và không dùng dựng hình. Trái/phải là của khách.');note.className='muted';optional.append(note);
  optional.append($('#captureAngle').closest('label'),root.querySelector('.thumbs'));review.after(optional);
  const advanced=node('details');advanced.className='photo-optional';advanced.append(node('summary','Thiết lập chụp nâng cao'));
- advanced.append($('#autoCapture').closest('label'),$('#retake'),guide.querySelector('details'));optional.after(advanced);
+ advanced.append($('#autoCapture').closest('label'),$('#retake'),guide.querySelector('details'));// GuidedCapture owns these controls and queries them within its panel.
+ guide.append(advanced);
  // Remove duplicate angle navigation and progress totals from the primary task.
  for(const id of ['guidedSteps','nextCapture','qualitySummary'])$('#'+id).hidden=true;
  for(const p of [...guide.querySelectorAll(':scope > p.muted')].slice(1))p.hidden=true;
