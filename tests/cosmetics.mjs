@@ -1,0 +1,28 @@
+import assert from 'node:assert/strict';
+import {freshCosmetics,clone,LIP_OUTER,LIP_INNER,lipAlpha,applyCosmetics,browPolygon} from '../dist/cosmetics.js';
+const square=[{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}],hole=[{x:.3,y:.3},{x:.7,y:.3},{x:.7,y:.7},{x:.3,y:.7}];
+assert.equal(lipAlpha(.5,.5,square,hole,.1),0,'mouth cavity excluded');
+assert.equal(lipAlpha(-.1,.2,square,hole,.1),0,'skin outside excluded');
+assert(lipAlpha(.02,.2,square,hole,.1)<lipAlpha(.15,.2,square,hole,.1),'feather tapers inside contour');
+const points=Array.from({length:478},()=>({x:.5,y:.5,z:0}));
+for(const [ring,rx,ry] of [[LIP_OUTER,.3,.2],[LIP_INNER,.15,.08]])ring.forEach((id,i)=>{const t=i/ring.length*Math.PI*2;points[id]={x:.5+rx*Math.cos(t),y:.5+ry*Math.sin(t),z:0}});
+const photo=()=>({width:100,height:100,data:new Uint8ClampedArray(100*100*4).fill(180)}),index=(x,y)=>(y*100+x)*4;
+const original=photo(),off=photo();applyCosmetics(off,points,freshCosmetics());assert.deepEqual(off,original,'default has zero effect');
+const state=freshCosmetics();state.lips.enabled=true;state.lips.opacity=80;
+const edited=applyCosmetics(photo(),points,state);
+for(const [x,y] of [[50,50],[10,10],[50,49]])assert.deepEqual(edited.data.slice(index(x,y),index(x,y)+4),original.data.slice(index(x,y),index(x,y)+4),'mouth and skin untouched');
+assert.notDeepEqual(edited.data.slice(index(50,65),index(50,65)+3),original.data.slice(index(50,65),index(50,65)+3),'lip receives color');
+assert.equal(edited.data[index(50,65)+3],180,'alpha preserved');
+state.lips.upper=state.lips.lower=0;assert.deepEqual(applyCosmetics(photo(),points,state),original,'zero coverage is identity');
+const saved=clone(state);state.lips.color='#000000';assert.notEqual(saved.lips.color,state.lips.color,'proposal settings independent');
+const browIds=[336,296,334,293,300,276,283,282,295,285];browIds.forEach((id,i)=>points[id]={x:.6+(i%5)*.02,y:i<5?.3:.32,z:0});
+const settings=freshCosmetics().brows.left,before=clone(points),base=browPolygon(points,'left',settings),moved=browPolygon(points,'left',{...settings,x:10,y:10});
+assert(moved.every((p,i)=>p.x>base[i].x&&p.y>base[i].y),'manual position adjustment');
+assert.deepEqual(points,before,'landmarks never mutated');
+const same=applyCosmetics(photo(),points,saved);assert.deepEqual(same,original,'zero coverage remains stable after snapshot');
+console.log('PASS cosmetic mouth exclusion, feathering, identity, pixel blending, independent settings and brow positioning');
+// Exercise texture lifecycle without a GPU; this adapter only needs a 2D context.
+const {CosmeticTexture}=await import('../dist/cosmetics.js');let draws=0;
+globalThis.document={createElement(){return {width:0,height:0,getContext(){return {drawImage(){draws++},getImageData:photo,putImageData(){}}}}}};
+const adapter=new CosmeticTexture({width:100,height:100},points);adapter.update(freshCosmetics());adapter.update(freshCosmetics());assert.equal(draws,2,'every edit starts from original, never accumulates pigment');adapter.clear();assert.equal(adapter.source,null);assert.equal(adapter.points,null);assert.equal(adapter.canvas.width,1);assert.equal(adapter.canvas.height,1);delete globalThis.document;
+console.log('PASS texture redraw from source and pixel/landmark cleanup');
