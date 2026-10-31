@@ -3,7 +3,7 @@ import {applyBrowTemplates} from './brow-templates.js';
 export const LIP_OUTER=[61,185,40,39,37,0,267,269,270,409,291,375,321,405,314,17,84,181,91,146];
 export const LIP_INNER=[78,191,80,81,82,13,312,311,310,415,308,324,318,402,317,14,87,178,88,95];
 export const PALETTE=[['Hồng đào','#c7767f'],['Hồng đất','#a55c69'],['Cam đào','#cf836a'],['Cam đỏ','#bb554c'],['Đỏ hồng','#b64b69'],['Đỏ đất','#965451']];
-export const freshCosmetics=()=>({lips:{enabled:false,color:'#c7767f',opacity:45,upper:100,lower:100,feather:25},brows:{enabled:false,color:'#594236',opacity:85,mode:'overlay',fade:75,style:'strokes',preset:'soft',linked:true,outline:false,left:{thickness:100,length:100,arch:0,x:0,y:0,rotation:0},right:{thickness:100,length:100,arch:0,x:0,y:0,rotation:0}}});
+export const freshCosmetics=()=>({lips:{enabled:false,color:'#c7767f',opacity:45,upper:100,lower:100,feather:25},brows:{enabled:false,color:'#594236',opacity:95,clarity:'defined',guide:true,mode:'overlay',fade:35,style:'strokes',preset:'soft',linked:true,outline:false,left:{thickness:100,length:100,arch:0,x:0,y:0,rotation:0},right:{thickness:100,length:100,arch:0,x:0,y:0,rotation:0}}});
 export const clone=value=>JSON.parse(JSON.stringify(value));
 export function inside(x,y,poly){let yes=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if((a.y>y)!==(b.y>y)&&x<(b.x-a.x)*(y-a.y)/(b.y-a.y)+a.x)yes=!yes}return yes}
 function distance(x,y,poly){let d=Infinity;for(let i=0;i<poly.length;i++){const a=poly[i],b=poly[(i+1)%poly.length],dx=b.x-a.x,dy=b.y-a.y,t=Math.max(0,Math.min(1,((x-a.x)*dx+(y-a.y)*dy)/(dx*dx+dy*dy||1)));d=Math.min(d,Math.hypot(x-a.x-t*dx,y-a.y-t*dy))}return d}
