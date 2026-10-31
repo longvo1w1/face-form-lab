@@ -20,11 +20,16 @@ const lipTech=panel.querySelectorAll('.service-subcategory select')[0];
 const events=[];panel.addEventListener('faceform:technology',event=>events.push(event.detail));
 lipTech.value='1';lipTech.dispatchEvent(new document.defaultView.Event('change'));
 assert.equal(panel.querySelector('#cosmetic-service-0 .technology-editor').hidden,true);
+assert.equal(panel.querySelector('.magnum-controls').hidden,false);
+assert(panel.querySelector('#cosmetic-service-0').contains(panel.querySelector('.magnum-controls')));
+assert.equal(panel.querySelectorAll('[data-path^="magnum."]').length,7);
+
 assert.equal(panel.querySelector('#cosmetic-service-0 .technology-heading').textContent,'Phun môi MagnumLips');
 assert.equal(events.at(-1).area,'lips');assert.equal(events.at(-1).technology,1);
 assert.equal(events.at(-1).supported,false);
 lipTech.value='0';lipTech.dispatchEvent(new document.defaultView.Event('change'));
 assert.equal(panel.querySelector('#cosmetic-service-0 .technology-editor').hidden,false);
+assert.equal(panel.querySelector('.magnum-controls').hidden,true);
 assert.equal(events.at(-1).supported,true);
 
 assert.equal(panel.dataset.activeService,'lips');
