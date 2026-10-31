@@ -15,3 +15,55 @@
 
 /* Brow design studio next to the 3D consultation */
 .brow-studio{margin:12px 0;padding:12px;background:#f6f5f1;border:1px solid #d7dfd4;border-radius:10px}.brow-studio-head{display:flex;align-items:baseline;justify-content:space-between;gap:6px}.brow-studio-head strong{font-size:15px}.brow-studio-head small{font-size:11px;color:#687c6d}.brow-studio-bar,.brow-studio-styles{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.brow-studio-bar button,.brow-studio-styles button{flex:1;white-space:nowrap;padding:9px 7px;font-size:11px}.brow-studio [aria-pressed=true]{background:#193c36;color:#fff;border-color:#193c36}.brow-studio-frame{position:relative;background:#e5e9e0;overflow:hidden;border-radius:8px;min-height:135px}.brow-studio-frame canvas{display:block;width:100%;height:auto;touch-action:none;cursor:crosshair}.brow-studio-empty{padding:50px 8px;text-align:center;color:#728075;font-size:12px}.brow-studio-help{font-size:11px;line-height:1.65;color:#536d5c}.brow-studio [hidden]{display:none!important}
+
+
+/* FACE FORM / Atelier interface – original visual language, no third-party assets. */
+:root{--ink:#332b29;--ink-soft:#6e625c;--champagne:#aa8863;--rose:#bf9895;--sand:#f2ede6;--ivory:#faf8f4;--line:#e6ddd4;--card:#fffdfb;--deep:#3d302d;font-family:"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--ivory)}
+body{background:linear-gradient(180deg,#f9f7f3,#f4efe9 65%,#faf8f4);color:var(--ink);-webkit-font-smoothing:antialiased}
+header{height:88px;padding:0 clamp(18px,4vw,80px);border-bottom:1px solid var(--line);background:rgba(255,253,250,.94)}
+.brand{color:var(--ink);letter-spacing:3.5px;font-weight:600;font-size:16px}.mark{background:var(--deep);color:#f8eee5;padding:9px 16px;border-radius:50%;font-style:italic;box-shadow:none}.brand small{color:#97877a;border-left-color:#d8cbc1;letter-spacing:1.7px;font-size:9px;font-weight:400}
+.pill{border-color:#d4c4b4;color:#806b5d;letter-spacing:1.8px;font-size:10px;background:#fffaf6}
+main{max-width:1720px;padding:42px clamp(18px,4vw,70px)}
+.heading{align-items:flex-end;margin-bottom:36px;gap:36px}.heading .eyebrow{font-size:10px;color:#9d7968;letter-spacing:3px;font-weight:600}.heading h1{font:normal clamp(36px,4.1vw,64px)/1.11 Georgia,"Times New Roman",serif;letter-spacing:-1.6px;margin:16px 0 0}.heading h1 em{color:#b78d87;font-weight:normal;font-style:italic}.heading>p{color:#887b73;font-size:13px;line-height:1.9;max-width:340px}
+.workspace{grid-template-columns:minmax(242px,285px) minmax(360px,1fr) minmax(240px,280px);border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:0 20px 65px rgba(67,42,32,.055);overflow:hidden}
+.capture,.controls{padding:26px 24px;background:var(--card);min-width:0}.capture{border-right:1px solid var(--line)}.controls{border-left:1px solid var(--line)}
+.section-title span{color:var(--champagne);font:italic 19px Georgia,serif}.section-title h2{font:normal 18px/1.3 Georgia,serif;letter-spacing:.1px}
+.muted{color:#877b72;font-size:11px}.eyebrow{color:#967c6c;letter-spacing:2.1px}
+button,.upload,.native-pick{border:1px solid #dccfc4;color:var(--ink);background:transparent;border-radius:8px;min-height:39px;transition:background .18s,border-color .18s,transform .18s}
+button:hover:not(:disabled),.native-pick:hover{border-color:#bca28e;background:#fbf3ee}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #b58e77;outline-offset:2px}
+.primary,.native-pick.primary,.photo-sources>button{background:var(--deep);color:#fffaf5;border-color:var(--deep);font-weight:600;letter-spacing:.2px}
+.primary:hover:not(:disabled),.native-pick.primary:hover,.photo-sources>button:hover:not(:disabled){background:#57403a;color:#fff;border-color:#57403a}
+button:disabled{opacity:.45}
+#cameraBox,#selectedPreview,.photo-review{background:#f4eee9;border-radius:12px}
+#cameraPlaceholder{color:#8b786f}#cameraPlaceholder p{font-family:Georgia,serif;color:#80695f}
+.consent input,#guideProgress{accent-color:#876755}.capture-hint,#guided{background:#f7f0e9;color:#796b61;border:1px solid #ecdfd1;border-radius:10px}
+#status{color:#827269}
+.viewer{background:linear-gradient(160deg,#f6f1eb,#eae1da 68%,#f6f1ea)}.viewer-top{padding:23px 28px}.viewer-top button{background:rgba(255,253,250,.78)}
+#stage{height:530px}#empty h3{font:normal 32px/1.2 Georgia,serif;color:#60504a;margin:22px 0 12px}#empty p{color:#8a776d}
+.orb{border:1px solid #d5bdad;background:radial-gradient(ellipse at 30% 25%,#fffaf0,#e8c9bccc 58%,#ceb5a5aa);box-shadow:14px 18px 45px #8d685224,inset -16px -5px 30px #b59c9577}
+.angles button{background:#fffaf7;border-color:#dfd2c9}.angles button.active,.cosmetic-services button[aria-pressed=true],.brow-studio [aria-pressed=true]{background:var(--deep);border-color:var(--deep);color:#fff8ef}
+.viewer-bottom button{background:#fffaf7}
+.caption{color:#98877b}
+.viewer>.cosmetics{margin:20px 22px;padding:23px;background:#fffdfb;border-color:#e7dcd1;border-radius:14px;box-shadow:0 7px 30px #6d49340a}
+.viewer>.cosmetics>h3{font:normal 25px Georgia,serif;letter-spacing:-.4px;color:var(--deep)}
+.cosmetic-services{background:#f7f1ec;border:1px solid #e8ded6;border-radius:10px;padding:5px;gap:5px;margin:16px 0}.cosmetic-services button{background:transparent;border:1px solid transparent;border-radius:7px;font-weight:600;font-size:13px;min-height:42px}
+.cosmetics summary{color:var(--ink);font-weight:600}.cosmetics label{color:#756760;font-size:12px}
+.cosmetics select,select{background:#fffdfb;border:1px solid #e0d4c9;border-radius:8px;padding:11px 12px;font-size:12px;color:var(--ink);min-height:41px}
+.service-subcategory{background:#fcf9f5;padding:15px;border-radius:10px;border:1px solid #eee5dc}
+.technology-heading{font:normal 20px Georgia,serif;color:var(--deep);margin:14px 0 4px}.technology-status{font-size:11px;color:#987a64;letter-spacing:.25px}
+.technology-editor,.magnum-controls,.collagen-controls,.pigmentation-controls{padding:16px 4px 4px}
+.magnum-controls h4,.collagen-controls h4,.pigmentation-controls h4{font:normal 19px Georgia,serif}
+input[type=range]{accent-color:#aa7d70}.cosmetics input[type=color]{border:1px solid #e0d4c9;background:#fff;border-radius:7px;width:48px;height:36px;padding:3px}
+.swatches button{border-radius:50%;width:31px;height:31px}.swatches button[aria-pressed=true]{box-shadow:0 0 0 2px #927061}
+.brow-template-grid button{background:#fcf8f4;border-color:#e8dad1}.brow-template-grid [aria-pressed=true]{border-color:#aa8875;background:#f4e8e0}
+.brow-studio{background:#fbf6f1;border:1px solid #e8dcd2;border-radius:12px}.brow-studio-frame{background:#f0e5db}
+.secondary-morphs{border-top:1px solid var(--line)}.secondary-morphs>summary{color:#6b5851}
+.reset{background:#f4ede7;border:1px solid #ece1d7;color:#69534d}
+.note{background:#f7f0e9}.note span{color:#a17b65}
+footer{border-top:1px solid var(--line);margin-top:28px;color:#897970}footer b{color:#6d5648}
+#originalBadge{background:#49332e;color:#fff6ed}
+@media(max-width:1200px){.workspace{grid-template-columns:230px minmax(290px,1fr) 230px}.capture,.controls{padding:19px 16px}#stage{height:480px}}
+@media(max-width:900px){.workspace{grid-template-columns:minmax(0,1fr)}.capture,.controls{border:0}.capture{border-bottom:1px solid var(--line)}.viewer{grid-row:2}.controls{border-top:1px solid var(--line)}#stage{height:480px}.heading{margin-bottom:26px}}
+@media(max-width:760px){header{height:70px;padding:0 18px}.brand{font-size:14px;letter-spacing:2px}.brand small{display:none}.pill{font-size:8px;padding:9px}main{padding:25px 13px}.heading{display:block}.heading h1{font-size:36px;letter-spacing:-.8px}.heading>p{display:block;font-size:12px;margin:16px 0 0}.workspace{border-radius:14px}.capture,.controls{padding:20px 16px}.viewer-top{padding:20px 18px}#stage{height:390px}.viewer>.cosmetics{margin:12px;padding:16px}.viewer>.cosmetics>h3{font-size:22px}.cosmetic-services{position:sticky;top:0;z-index:4;background:#f7f1ec;padding:5px}.angles{flex-wrap:wrap}.angles button{flex:1;min-width:85px}footer{padding:18px 2px}.native-pick{min-height:44px}.cosmetics select{font-size:13px}.technology-editor,.magnum-controls,.collagen-controls,.pigmentation-controls{padding:14px 0}}
+@media(prefers-reduced-motion:reduce){button,.native-pick{transition:none}}
