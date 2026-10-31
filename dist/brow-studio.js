@@ -21,6 +21,8 @@ export function mountBrowStudio(viewer,{getSource,getPoints,getState,getPreview,
   const panel=viewer.querySelector('#cosmetics');
   if(!panel)throw Error('Missing cosmetic panel');
   panel.querySelector('.cosmetic-services')?.after(host);
+  host.hidden=panel.dataset.activeService!=='brows';
+  panel.querySelectorAll('.cosmetic-services button').forEach((button,index)=>button.addEventListener('click',()=>{host.hidden=index!==1}));
   const canvas=host.querySelector('canvas'),ctx=canvas.getContext('2d');
   const empty=host.querySelector('.brow-studio-empty');
   let side='left',drag=null,geometry=null;
