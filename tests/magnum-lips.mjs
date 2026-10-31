@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {freshCosmetics,applyCosmetics,LIP_OUTER,LIP_INNER} from '../dist/cosmetics.js';
+import {freshMagnum,applyMagnumLips} from '../dist/magnum-lips.js';
+const w=120,h=80,points=Array.from({length:478},()=>({x:.5,y:.5,z:0}));
+const outer=[[.25,.40],[.35,.32],[.50,.30],[.65,.32],[.75,.40],[.70,.52],[.50,.57],[.30,.52]];
+LIP_OUTER.forEach((id,i)=>{const q=outer[Math.floor(i*outer.length/LIP_OUTER.length)];points[id]={x:q[0],y:q[1]};});
+LIP_INNER.forEach((id,i)=>{const q=outer[Math.floor(i*outer.length/LIP_INNER.length)];points[id]={x:.5+(q[0]-.5)*.45,y:.44+(q[1]-.44)*.28};});
+points[0]={x:.5,y:.30};points[17]={x:.5,y:.57};
+const make=()=>{const data=new Uint8ClampedArray(w*h*4);for(let i=0;i<data.length;i+=4){data[i]=176+(i/4%3)*3;data[i+1]=106;data[i+2]=113;data[i+3]=255}return {width:w,height:h,data}};
+const original=make(),none=make();applyMagnumLips(none,points,freshMagnum());assert.deepEqual(none,original,'disabled mode unchanged');
+const state=freshMagnum();state.enabled=true;const edited=make();applyMagnumLips(edited,points,state);
+assert.notDeepEqual(edited,original,'enabled mode changes pixels');
+assert.equal(edited.data[(5*w+5)*4],original.data[(5*w+5)*4],'outside lip is untouched');
+const low=make();applyMagnumLips(low,points,{...state,coverage:0});assert.deepEqual(low,original,'zero coverage does nothing');
+const uniform=make();applyMagnumLips(uniform,points,{...state,gradient:0,texture:0,uniformity:100});assert.notDeepEqual(uniform,edited,'adjustments affect rendered output');
+const combined=freshCosmetics();combined.magnum.enabled=true;assert.notDeepEqual(applyCosmetics(make(),points,combined),original,'existing 3D texture path uses MagnumLips');
+console.log('PASS MagnumLips original protection, mask, coverage, gradient, and texture integration');
