@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import {BROW_TEMPLATES,templateAlpha,profile,applyBrowTemplates,browFrame,previewPath} from '../dist/brow-templates.js';
+import {freshCosmetics,clone,applyCosmetics} from '../dist/cosmetics.js';
+assert.equal(new Set(BROW_TEMPLATES.map(p=>previewPath(p.id))).size,6,'six distinct silhouettes');
+assert.equal(templateAlpha(-.1,0,'soft'),0);assert.equal(templateAlpha(1.1,0,'soft'),0);assert.equal(templateAlpha(.5,1,'soft'),0);
+assert(profile(.6,'arch').y<profile(.6,'straight').y,'arch visibly higher than straight');
+const w=256,h=128,points=Array.from({length:478},()=>({x:.5,y:.5,z:0}));
+for(const [ids,cx,dir] of [[[336,296,334,293,300,276,283,282,295,285],170,1],[[107,66,105,63,70,46,53,52,65,55],86,-1]])ids.forEach((id,i)=>{points[id]={x:(cx+dir*((i<5?i:9-i)/4-.5)*50)/w,y:(i<5?38:46)/h,z:0}});
+const image=()=>{const data=new Uint8ClampedArray(w*h*4);for(let i=0;i<data.length;i+=4){data[i]=205;data[i+1]=165;data[i+2]=140;data[i+3]=255}return {width:w,height:h,data}};
+const state=freshCosmetics(),original=image(),before=clone(points);
+assert.deepEqual(applyCosmetics(image(),points,state),original,'disabled is identity');state.brows.enabled=true;
+const outputs=BROW_TEMPLATES.map(p=>applyBrowTemplates(image(),points,{...state.brows,preset:p.id}).data);
+assert.equal(new Set(outputs.map(d=>Buffer.from(d).toString('base64'))).size,6,'all six templates change output differently');
+assert.deepEqual(applyBrowTemplates(image(),points,{...state.brows,opacity:0,mode:'replace'}),original,'zero opacity never removes original');
+const a=applyBrowTemplates(image(),points,state.brows),b=applyBrowTemplates(image(),points,state.brows);assert.deepEqual(a,b,'deterministic stroke texture');
+for(let y=60;y<h;y++)for(let x=0;x<w;x++){const i=(y*w+x)*4;assert.deepEqual(a.data.slice(i,i+4),original.data.slice(i,i+4),'eyes/lower face untouched');}
+assert.deepEqual(points,before,'source landmarks immutable');
+const left=browFrame(points,'left',state.brows.left,w,h),right=browFrame(points,'right',state.brows.right,w,h);assert.equal(left.span,right.span);assert.equal(Math.abs(left.angle),0);assert(Math.abs(Math.abs(right.angle)-Math.PI)<1e-8);
+const dark=image();for(let y=38;y<=46;y++)for(let x=61;x<=111;x++)for(let k=0;k<3;k++)dark.data[(y*w+x)*4+k]=35;
+const originalDark=dark.data.slice();applyBrowTemplates(dark,points,{...state.brows,mode:'replace',fade:100});assert(dark.data[(42*w+86)*4]>originalDark[(42*w+86)*4],'replacement lightens original brow region');
+const outline=applyBrowTemplates({width:w,height:h,data:originalDark.slice()},points,{...state.brows,mode:'replace',outline:true});assert.equal(outline.data[(42*w+86)*4],originalDark[(42*w+86)*4],'outline never erases original');
+assert.deepEqual(original,image(),'source image never changed by rendering other outputs');
+console.log('PASS six distinct brow templates, clipping, eye-region preservation, mirror frames, deterministic strokes, replacement and outline/zero-opacity safety');

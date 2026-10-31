@@ -1,0 +1,19 @@
+import {parseHTML} from 'linkedom';
+import assert from 'node:assert/strict';
+import {mountCosmetics} from '../dist/cosmetics-panel.js';
+import {freshCosmetics,clone} from '../dist/cosmetics.js';
+import {prioritizeCosmetics} from '../dist/consultation-layout.js';
+import {readFile} from 'node:fs/promises';
+const {document}=parseHTML(await readFile(new URL('../dist/index.html',import.meta.url),'utf8'));
+globalThis.document=document;
+// LinkeDOM provides the DOM but not the native select.value setter.
+Object.defineProperty(document.defaultView.HTMLSelectElement.prototype,'value',{configurable:true,get(){return this.querySelector('option[selected]')?.value||this.querySelector('option')?.value||''},set(value){for(const o of this.querySelectorAll('option')){if(o.value===String(value))o.setAttribute('selected','');else o.removeAttribute('selected')}}});
+let state=freshCosmetics(),changes=0;const history=[];
+const panel=document.querySelector('#cosmetics');const ui=mountCosmetics(panel,{getState:()=>state,before(){history.push(clone(state))},change(){changes++},action(){}});prioritizeCosmetics();ui.setEnabled(true);
+const cards=panel.querySelectorAll('[data-brow-template]');assert.equal(cards.length,6);
+cards[2].click();assert.equal(changes,1);assert.equal(state.brows.preset,'arch');assert(state.brows.enabled);assert.equal(history.length,1);assert(!history[0].brows.enabled);assert.equal(cards[2].getAttribute('aria-pressed'),'true');
+const mode=panel.querySelector('[data-path="brows.mode"]');mode.value='replace';mode.dispatchEvent(new document.defaultView.Event('change'));assert.equal(state.brows.mode,'replace');assert.equal(history.length,2);
+const input=panel.querySelector('[data-path="brows.left.rotation"]');input.value='8';input.dispatchEvent(new document.defaultView.Event('input'));assert.equal(state.brows.right.rotation,-8);
+state=history[0];ui.sync();assert.equal(cards[0].getAttribute('aria-pressed'),'true');assert.equal(panel.querySelector('[data-path="brows.enabled"]').checked,false);
+ui.setEnabled(false);assert(panel.querySelector('fieldset').disabled);assert(document.querySelector('.viewer').contains(panel));
+console.log('PASS template selection enables brows, shared undo snapshots, mode input, mirrored edits, reset sync and near-viewer ownership');
