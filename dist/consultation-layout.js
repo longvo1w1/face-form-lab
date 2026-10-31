@@ -22,7 +22,7 @@ export function prioritizeCosmetics(root=document){
   const title=document.createElement('label');title.textContent=categories[index].name;
   const selectInput=document.createElement('select');selectInput.setAttribute('aria-label',categories[index].name);
   categories[index].items.forEach((name,i)=>{const option=document.createElement('option');option.value=String(i);option.textContent=name;selectInput.append(option)});
-  const hint=document.createElement('p');hint.className='muted';hint.textContent='Chọn dịch vụ để tư vấn; các thông số bên dưới là mô phỏng dáng và màu, không dự đoán kết quả điều trị.';
+  const hint=document.createElement('p');hint.className='muted';hint.textContent='Danh mục tham khảo tư vấn. Các mục chưa có mô phỏng chuyên biệt; bộ chỉnh bên dưới chỉ minh họa màu hoặc dáng.';
   title.append(selectInput);wrapper.append(title,hint);
   section.querySelector('summary').after(wrapper);
  });
