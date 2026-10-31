@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import {freshCollagen,applyCollagenLips} from '../dist/collagen-lips.js';
+import {LIP_OUTER,LIP_INNER,freshCosmetics,applyCosmetics} from '../dist/cosmetics.js';
+const width=120,height=90;
+const points=Array.from({length:478},()=>({x:.5,y:.5,z:0}));
+const ring=[[.20,.45],[.30,.34],[.43,.32],[.57,.32],[.70,.34],[.80,.45],[.71,.56],[.58,.60],[.42,.60],[.29,.56]];
+LIP_OUTER.forEach((id,i)=>{const p=ring[Math.floor(i*ring.length/LIP_OUTER.length)];points[id]={x:p[0],y:p[1]}});
+LIP_INNER.forEach((id,i)=>{const p=ring[Math.floor(i*ring.length/LIP_INNER.length)];points[id]={x:.5+(p[0]-.5)*.4,y:.46+(p[1]-.46)*.3}});
+points[0]={x:.5,y:.32};points[17]={x:.5,y:.60};
+function make(){const data=new Uint8ClampedArray(width*height*4);for(let i=0;i<data.length;i+=4){data[i]=160+(i/4%7);data[i+1]=92;data[i+2]=111;data[i+3]=255}return {width,height,data}}
+const original=make(),disabled=make();
+applyCollagenLips(disabled,points,freshCollagen());assert.deepEqual(disabled,original);
+const settings=freshCollagen();settings.enabled=true;
+const rendered=make();applyCollagenLips(rendered,points,settings);
+assert.notDeepEqual(rendered,original,'finish changes lip pixels');
+assert.equal(rendered.data[(2*width+2)*4],original.data[(2*width+2)*4],'skin remains intact');
+const zero=make();applyCollagenLips(zero,points,{...settings,coverage:0});assert.deepEqual(zero,original);
+const matte=make();applyCollagenLips(matte,points,{...settings,finish:'matte',glow:100});
+const glossy=make();applyCollagenLips(glossy,points,{...settings,finish:'glossy',glow:100});
+assert.notDeepEqual(matte,glossy,'finish modes differ');
+const state=freshCosmetics();state.collagen.enabled=true;
+assert.notDeepEqual(applyCosmetics(make(),points,state),original,'shared 3D texture path renders Collagen');
+console.log('PASS collagen lip mask, finish, isolation, zero coverage, texture pipeline');
