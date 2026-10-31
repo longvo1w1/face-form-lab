@@ -29,6 +29,7 @@ export function prioritizeCosmetics(root=document){
    ['Tái tạo chân mày hư, lệch dáng hoặc trổ màu','Chưa có mô phỏng phục hồi hoặc xử lý trổ màu.']
   ]}
  ];
+ function notifyTechnology(detail){const event=new panel.ownerDocument.defaultView.Event('faceform:technology',{bubbles:true});event.detail=detail;panel.dispatchEvent(event)}
  function updateStudio(){
   const studio=panel.querySelector('.brow-studio');
   if(studio)studio.hidden=panel.dataset.activeService!=='brows'||panel.dataset.activeTechnology!=='0';
@@ -39,7 +40,7 @@ export function prioritizeCosmetics(root=document){
   panel.dataset.activeTechnology=sections[index].querySelector('.service-subcategory select').value;
   updateStudio();
   const active=sections[index].querySelector('.service-subcategory select');
-  if(active)panel.dispatchEvent(new CustomEvent('faceform:technology',{detail:{area:index===0?'lips':'brows',technology:Number(active.value),supported:Number(active.value)===0},bubbles:true}));
+  if(active)notifyTechnology({area:index===0?'lips':'brows',technology:Number(active.value),supported:Number(active.value)===0});
  }
  sections.forEach((section,index)=>{
   section.id='cosmetic-service-'+index;
@@ -68,7 +69,7 @@ export function prioritizeCosmetics(root=document){
    const stateLabel=wrapper.querySelector('.technology-status');if(stateLabel)stateLabel.textContent=item[2]?'Có công cụ minh họa':'Chưa có mô phỏng riêng – chỉ hiển thị thông tin tư vấn';
    if(panel.dataset.activeService===(index===0?'lips':'brows'))panel.dataset.activeTechnology=selectInput.value;
    updateStudio();
-   if(panel.dataset.activeService===(index===0?'lips':'brows'))panel.dispatchEvent(new CustomEvent('faceform:technology',{detail:{area:index===0?'lips':'brows',technology:Number(selectInput.value),supported:!!item[2]},bubbles:true}));
+   if(panel.dataset.activeService===(index===0?'lips':'brows'))notifyTechnology({area:index===0?'lips':'brows',technology:Number(selectInput.value),supported:!!item[2]});
   }
   selectInput.addEventListener('change',choose);
   choose();
