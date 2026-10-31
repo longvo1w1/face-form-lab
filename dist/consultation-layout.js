@@ -10,7 +10,7 @@ export function prioritizeCosmetics(root=document){
   {name:'Công nghệ môi',items:[
    ['Xăm môi','Đang có công cụ thử màu môi, độ phủ và viền môi. Đây là mô phỏng tư vấn, không dự đoán màu sau lành.',true],
    ['Phun môi MagnumLips','Đã có mô phỏng lớp màu và chuyển sắc tham khảo. Không thể dự đoán kết quả công nghệ thực tế.',true],
-   ['Phun môi Collagen','Chưa có mô phỏng riêng cho công nghệ Collagen.'],
+   ['Phun môi Collagen','Có mô phỏng hiệu ứng màu, ánh sáng và độ bóng môi tham khảo; không dự đoán tăng collagen hoặc kết quả điều trị.',true],
    ['Khử thâm và xử lý sắc tố môi','Chưa có mô phỏng điều trị hoặc kết quả khử thâm.'],
    ['Phun môi hiệu ứng màu tự nhiên','Chưa có mô phỏng chuyên biệt; có thể tham khảo màu tại Xăm môi.'],
    ['Tư vấn màu môi theo sắc da','Chưa có công cụ phân tích màu da tự động; tham khảo màu tại Xăm môi.'],
@@ -40,7 +40,7 @@ export function prioritizeCosmetics(root=document){
   panel.dataset.activeTechnology=sections[index].querySelector('.service-subcategory select').value;
   updateStudio();
   const active=sections[index].querySelector('.service-subcategory select');
-  if(active)notifyTechnology({area:index===0?'lips':'brows',technology:Number(active.value),supported:index===0?Number(active.value)<=1:Number(active.value)===0});
+  if(active)notifyTechnology({area:index===0?'lips':'brows',technology:Number(active.value),supported:index===0?Number(active.value)<=2:Number(active.value)===0});
  }
  sections.forEach((section,index)=>{
   section.id='cosmetic-service-'+index;
@@ -59,11 +59,12 @@ export function prioritizeCosmetics(root=document){
   const stateLabel=document.createElement('p');stateLabel.className='technology-status';
   title.append(selectInput);wrapper.append(title,heading,stateLabel,hint);
   summary.after(wrapper,editor);
-  if(index===0){const magnum=panel.querySelector('.magnum-controls');if(magnum)section.append(magnum)}
+  if(index===0){for(const klass of ['.magnum-controls','.collagen-controls']){const element=panel.querySelector(klass);if(element)section.append(element)}}
   function choose(){
    const item=catalog[index].items[Number(selectInput.value)]||catalog[index].items[0];
    editor.hidden=index===0?Number(selectInput.value)!==0:!item[2];
    const magnum=panel.querySelector('.magnum-controls');if(magnum&&index===0)magnum.hidden=Number(selectInput.value)!==1;
+   const collagen=panel.querySelector('.collagen-controls');if(collagen&&index===0)collagen.hidden=Number(selectInput.value)!==2;
    hint.textContent=item[1];
    wrapper.dataset.selectedTechnology=item[0];
    wrapper.setAttribute('data-technology-index',selectInput.value);
