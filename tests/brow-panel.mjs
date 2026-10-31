@@ -33,10 +33,18 @@ assert.equal(panel.querySelector('.magnum-controls').hidden,true);
 assert(panel.querySelector('#cosmetic-service-0').contains(panel.querySelector('.collagen-controls')));
 assert.equal(events.at(-1).technology,2);
 assert.equal(events.at(-1).supported,true);
+lipTech.value='3';lipTech.dispatchEvent(new document.defaultView.Event('change'));
+assert.equal(panel.querySelector('.pigmentation-controls').hidden,false);
+assert.equal(panel.querySelector('.collagen-controls').hidden,true);
+assert.equal(panel.querySelector('.magnum-controls').hidden,true);
+assert(panel.querySelector('#cosmetic-service-0').contains(panel.querySelector('.pigmentation-controls')));
+assert.equal(events.at(-1).technology,3);
+assert.equal(events.at(-1).supported,true);
 lipTech.value='0';lipTech.dispatchEvent(new document.defaultView.Event('change'));
 assert.equal(panel.querySelector('#cosmetic-service-0 .technology-editor').hidden,false);
 assert.equal(panel.querySelector('.magnum-controls').hidden,true);
 assert.equal(panel.querySelector('.collagen-controls').hidden,true);
+assert.equal(panel.querySelector('.pigmentation-controls').hidden,true);
 assert.equal(events.at(-1).supported,true);
 
 assert.equal(panel.dataset.activeService,'lips');

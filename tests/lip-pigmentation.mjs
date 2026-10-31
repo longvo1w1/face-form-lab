@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import {freshPigmentPreview,applyPigmentPreview} from '../dist/lip-pigmentation.js';
+import {LIP_OUTER,LIP_INNER,freshCosmetics,applyCosmetics} from '../dist/cosmetics.js';
+const width=120,height=90;
+const points=Array.from({length:478},()=>({x:.5,y:.5,z:0}));
+const ring=[[.20,.45],[.30,.34],[.43,.32],[.57,.32],[.70,.34],[.80,.45],[.71,.56],[.58,.60],[.42,.60],[.29,.56]];
+LIP_OUTER.forEach((id,i)=>{const p=ring[Math.floor(i*ring.length/LIP_OUTER.length)];points[id]={x:p[0],y:p[1]}});
+LIP_INNER.forEach((id,i)=>{const p=ring[Math.floor(i*ring.length/LIP_INNER.length)];points[id]={x:.5+(p[0]-.5)*.35,y:.46+(p[1]-.46)*.25}});
+points[0]={x:.5,y:.32};points[17]={x:.5,y:.60};
+function make(){const data=new Uint8ClampedArray(width*height*4);for(let y=0;y<height;y++)for(let x=0;x<width;x++){const i=(y*width+x)*4;data[i]=(x%2)?90:168;data[i+1]=(x%2)?64:100;data[i+2]=(x%2)?95:121;data[i+3]=255}return {width,height,data}}
+const original=make(),disabled=make();
+applyPigmentPreview(disabled,points,freshPigmentPreview());assert.deepEqual(disabled,original);
+const settings=freshPigmentPreview();settings.enabled=true;
+const edited=make();applyPigmentPreview(edited,points,settings);
+assert.notDeepEqual(edited,original,'active preview changes lip pixels');
+assert.deepEqual([...edited.data.slice(0,16)],[...original.data.slice(0,16)],'background preserved');
+const zero=make();applyPigmentPreview(zero,points,{...settings,strength:0});assert.deepEqual(zero,original);
+const low=make();applyPigmentPreview(low,points,{...settings,strength:10});
+assert.notDeepEqual(edited,low,'strength changes result');
+const combined=freshCosmetics();combined.pigmentation.enabled=true;
+assert.notDeepEqual(applyCosmetics(make(),points,combined),original,'pipeline combines independently');
+console.log('PASS pigmentation mask, zero strength, color correction, pipeline');
