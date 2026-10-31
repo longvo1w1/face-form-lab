@@ -48,10 +48,10 @@ export function mountBrowStudio(viewer,{getSource,getPoints,getState,getPreview,
     const arch=settings().arch/100;
     const a=point(.04),b=point(.62,-.14-arch),c=point(.98);
     const path=[a,b,c].map(([x,y])=>fromImage(x,y));
-    ctx.lineWidth=2;ctx.strokeStyle='#e9c77b';ctx.setLineDash([7,5]);ctx.beginPath();
-    ctx.moveTo(...path[0]);ctx.quadraticCurveTo(...path[1],...path[2]);ctx.stroke();ctx.setLineDash([]);
+    ctx.lineWidth=2;ctx.strokeStyle='#e9c77b';ctx.setLineDash([7,5]);if(state.brows.guide!==false){ctx.beginPath();
+    ctx.moveTo(...path[0]);ctx.quadraticCurveTo(...path[1],...path[2]);ctx.stroke()}ctx.setLineDash([]);
     const labels=['1 Đầu','2 Đỉnh','3 Đuôi'];
-    path.forEach(([x,y],i)=>{ctx.beginPath();ctx.arc(x,y,12,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='#1b5646';ctx.stroke();
+    if(state.brows.guide!==false)path.forEach(([x,y],i)=>{ctx.beginPath();ctx.arc(x,y,12,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='#1b5646';ctx.stroke();
       ctx.fillStyle='#173d32';ctx.font='bold 16px sans-serif';ctx.fillText(labels[i],x+16,y-12)});
     geometry.handles=path;
   }
