@@ -1,4 +1,4 @@
-// Move existing controls without duplicating state or changing component ownership.
+// Distinct lip/brow technology navigation; only existing supported editors are interactive.
 export function prioritizeCosmetics(root=document){
  const panel=root.querySelector('#cosmetics'),viewer=root.querySelector('.viewer');
  viewer.querySelector('.angles').after(panel);
@@ -6,28 +6,70 @@ export function prioritizeCosmetics(root=document){
  const sections=[...panel.querySelector('fieldset').children].filter(el=>el.tagName==='DETAILS');
  const nav=document.createElement('nav');nav.className='cosmetic-services';nav.setAttribute('aria-label','Chọn vùng tư vấn');
  const labels=['Môi','Mày'];
- sections.forEach((section,i)=>{
-  section.id='cosmetic-service-'+i;
-  const button=document.createElement('button');button.type='button';button.textContent=labels[i];button.setAttribute('aria-controls',section.id);
-  button.onclick=()=>select(i);nav.append(button);
- });
- function select(index){sections.forEach((section,i)=>{section.hidden=i!==index;section.open=i===index;nav.children[i].setAttribute('aria-pressed',String(i===index))});panel.dataset.activeService=index===0?'lips':'brows';const studio=panel.querySelector('.brow-studio');if(studio)studio.hidden=index!==1;}
- panel.querySelector('h3').after(nav);
- const categories=[
-  {name:'Dịch vụ môi',items:['Xăm môi / phun môi','Thử màu môi tự nhiên','Tư vấn màu theo sắc da','Điều chỉnh màu môi cũ','Môi không đều màu','Khử thâm môi (tư vấn)']},
-  {name:'Dịch vụ mày',items:['Thiết kế dáng mày','Điêu khắc tạo sợi','Phun mày tán bột / Ombre','Đầu sợi – đuôi phun','Điều chỉnh mày cũ','Tái tạo dáng mày (tư vấn)']}
+ const catalog=[
+  {name:'Công nghệ môi',items:[
+   ['Xăm môi','Đang có công cụ thử màu môi, độ phủ và viền môi. Đây là mô phỏng tư vấn, không dự đoán màu sau lành.',true],
+   ['Phun môi MagnumLips','Chưa có mô phỏng riêng cho công nghệ MagnumLips.'],
+   ['Phun môi Collagen','Chưa có mô phỏng riêng cho công nghệ Collagen.'],
+   ['Khử thâm và xử lý sắc tố môi','Chưa có mô phỏng điều trị hoặc kết quả khử thâm.'],
+   ['Phun môi hiệu ứng màu tự nhiên','Chưa có mô phỏng chuyên biệt; có thể tham khảo màu tại Xăm môi.'],
+   ['Tư vấn màu môi theo sắc da','Chưa có công cụ phân tích màu da tự động; tham khảo màu tại Xăm môi.'],
+   ['Chỉnh sửa màu môi phun xăm cũ','Chưa có mô phỏng chỉnh sửa sắc tố cũ.'],
+   ['Xử lý môi không đều màu','Chưa có mô phỏng xử lý vùng không đều màu.']
+  ]},
+  {name:'Công nghệ mày',items:[
+   ['Thiết kế và định hình dáng chân mày','Đang có công cụ thử dáng, sợi/bột, chỉnh hai bên và kéo các điểm mày.',true],
+   ['Điêu khắc chân mày tạo sợi tự nhiên','Chưa có mô phỏng chuyên biệt kỹ thuật điêu khắc.'],
+   ['Công nghệ sợi siêu thực Sleekbrows','Chưa có mô phỏng riêng công nghệ Sleekbrows.'],
+   ['Công nghệ sợi tàng hình DouYin','Chưa có mô phỏng riêng công nghệ DouYin.'],
+   ['Phun mày Nanobrows','Chưa có mô phỏng riêng công nghệ Nanobrows.'],
+   ['Phun mày đầu sợi đuôi phun','Chưa có mô phỏng riêng kết quả kỹ thuật này.'],
+   ['Phun mày hiệu ứng Ombre, rải hạt','Chưa có mô phỏng riêng hạt mực; hiệu ứng Ombre trong Thiết kế mày chỉ mang tính minh họa.'],
+   ['Chỉnh sửa chân mày phun xăm cũ','Chưa có mô phỏng sửa sắc tố phun xăm cũ.'],
+   ['Tái tạo chân mày hư, lệch dáng hoặc trổ màu','Chưa có mô phỏng phục hồi hoặc xử lý trổ màu.']
+  ]}
  ];
+ function updateStudio(){
+  const studio=panel.querySelector('.brow-studio');
+  if(studio)studio.hidden=panel.dataset.activeService!=='brows'||panel.dataset.activeTechnology!=='0';
+ }
+ function select(index){
+  sections.forEach((section,i)=>{section.hidden=i!==index;section.open=i===index;nav.children[i].setAttribute('aria-pressed',String(i===index))});
+  panel.dataset.activeService=index===0?'lips':'brows';
+  panel.dataset.activeTechnology=sections[index].querySelector('.service-subcategory select').value;
+  updateStudio();
+ }
  sections.forEach((section,index)=>{
+  section.id='cosmetic-service-'+index;
+  const button=document.createElement('button');button.type='button';button.textContent=labels[index];button.setAttribute('aria-controls',section.id);
+  button.onclick=()=>select(index);nav.append(button);
+  const summary=section.querySelector('summary');
+  summary.textContent=index===0?'Công cụ môi':'Công cụ mày';
+  const editor=document.createElement('div');editor.className='technology-editor';
+  while(summary.nextSibling)editor.append(summary.nextSibling);
   const wrapper=document.createElement('div');wrapper.className='service-subcategory';
-  const title=document.createElement('label');title.textContent=categories[index].name;
-  const selectInput=document.createElement('select');selectInput.setAttribute('aria-label',categories[index].name);
-  categories[index].items.forEach((name,i)=>{const option=document.createElement('option');option.value=String(i);option.textContent=name;selectInput.append(option)});
-  const hint=document.createElement('p');hint.className='muted';hint.textContent='Danh mục tham khảo tư vấn. Các mục chưa có mô phỏng chuyên biệt; bộ chỉnh bên dưới chỉ minh họa màu hoặc dáng.';
+  const title=document.createElement('label');title.textContent=catalog[index].name;
+  const selectInput=document.createElement('select');selectInput.setAttribute('aria-label',catalog[index].name);
+  catalog[index].items.forEach(([name],i)=>{const option=document.createElement('option');option.value=String(i);option.textContent=name;selectInput.append(option)});
+  const hint=document.createElement('p');hint.className='muted';hint.setAttribute('role','status');
   title.append(selectInput);wrapper.append(title,hint);
-  section.querySelector('summary').after(wrapper);
+  summary.after(wrapper,editor);
+  function choose(){
+   const item=catalog[index].items[Number(selectInput.value)]||catalog[index].items[0];
+   editor.hidden=!item[2];
+   hint.textContent=item[1];
+   if(panel.dataset.activeService===(index===0?'lips':'brows'))panel.dataset.activeTechnology=selectInput.value;
+   updateStudio();
+  }
+  selectInput.addEventListener('change',choose);
+  choose();
  });
+ panel.querySelector('h3').after(nav);
  select(0);
- const controls=root.querySelector('.controls');controls.querySelector('h2').textContent='Điều chỉnh bổ sung';
+ const controls=root.querySelector('.controls');
+ controls.querySelector('h2').textContent='Điều chỉnh bổ sung';
  controls.querySelector('p.muted').textContent='Chỉnh hình mũi, cằm hoặc độ đầy môi khi cần.';
- const secondary=document.createElement('details'),summary=document.createElement('summary');summary.textContent='Chỉnh hình mũi / cằm / môi';secondary.className='secondary-morphs';secondary.append(summary,root.querySelector('#sliders'));controls.querySelector('p.muted').after(secondary);
+ const secondary=document.createElement('details'),summary=document.createElement('summary');
+ summary.textContent='Chỉnh hình mũi / cằm / môi';secondary.className='secondary-morphs';
+ secondary.append(summary,root.querySelector('#sliders'));controls.querySelector('p.muted').after(secondary);
 }
