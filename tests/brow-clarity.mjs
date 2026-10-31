@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 import {freshCosmetics} from '../dist/cosmetics.js';
-import {templateAlpha,fadeOriginal} from '../dist/brow-templates.js';
+import {templateAlpha,profile,fadeOriginal} from '../dist/brow-templates.js';
 const state=freshCosmetics().brows;
 assert.equal(state.clarity,'defined');
 assert.equal(state.guide,true);
 assert(state.opacity>=90);
 assert(state.fade<=40);
-const bright=templateAlpha(.35,0,'soft',0,'strokes');
+const bright=templateAlpha(.35,profile(.35,'soft').y,'soft',0,'strokes');
 assert(bright>.2,'fibers must be visible without overwhelming smoothing');
 const width=100,height=50;
 const data=new Uint8ClampedArray(width*height*4);
