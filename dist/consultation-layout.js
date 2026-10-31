@@ -29,6 +29,7 @@ export function prioritizeCosmetics(root=document){
    ['Tái tạo chân mày hư, lệch dáng hoặc trổ màu','Chưa có mô phỏng phục hồi hoặc xử lý trổ màu.']
   ]}
  ];
+ function notifyTechnology(detail){const event=new panel.ownerDocument.defaultView.Event('faceform:technology',{bubbles:true});event.detail=detail;panel.dispatchEvent(event)}
  function updateStudio(){
   const studio=panel.querySelector('.brow-studio');
   if(studio)studio.hidden=panel.dataset.activeService!=='brows'||panel.dataset.activeTechnology!=='0';
@@ -38,6 +39,8 @@ export function prioritizeCosmetics(root=document){
   panel.dataset.activeService=index===0?'lips':'brows';
   panel.dataset.activeTechnology=sections[index].querySelector('.service-subcategory select').value;
   updateStudio();
+  const active=sections[index].querySelector('.service-subcategory select');
+  if(active)notifyTechnology({area:index===0?'lips':'brows',technology:Number(active.value),supported:Number(active.value)===0});
  }
  sections.forEach((section,index)=>{
   section.id='cosmetic-service-'+index;
@@ -52,14 +55,21 @@ export function prioritizeCosmetics(root=document){
   const selectInput=document.createElement('select');selectInput.setAttribute('aria-label',catalog[index].name);
   catalog[index].items.forEach(([name],i)=>{const option=document.createElement('option');option.value=String(i);option.textContent=name;selectInput.append(option)});
   const hint=document.createElement('p');hint.className='muted';hint.setAttribute('role','status');
-  title.append(selectInput);wrapper.append(title,hint);
+  const heading=document.createElement('h4');heading.className='technology-heading';
+  const stateLabel=document.createElement('p');stateLabel.className='technology-status';
+  title.append(selectInput);wrapper.append(title,heading,stateLabel,hint);
   summary.after(wrapper,editor);
   function choose(){
    const item=catalog[index].items[Number(selectInput.value)]||catalog[index].items[0];
    editor.hidden=!item[2];
    hint.textContent=item[1];
+   wrapper.dataset.selectedTechnology=item[0];
+   wrapper.setAttribute('data-technology-index',selectInput.value);
+   const heading=wrapper.querySelector('.technology-heading');if(heading)heading.textContent=item[0];
+   const stateLabel=wrapper.querySelector('.technology-status');if(stateLabel)stateLabel.textContent=item[2]?'Có công cụ minh họa':'Chưa có mô phỏng riêng – chỉ hiển thị thông tin tư vấn';
    if(panel.dataset.activeService===(index===0?'lips':'brows'))panel.dataset.activeTechnology=selectInput.value;
    updateStudio();
+   if(panel.dataset.activeService===(index===0?'lips':'brows'))notifyTechnology({area:index===0?'lips':'brows',technology:Number(selectInput.value),supported:!!item[2]});
   }
   selectInput.addEventListener('change',choose);
   choose();
