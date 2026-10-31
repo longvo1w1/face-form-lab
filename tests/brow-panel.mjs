@@ -16,6 +16,17 @@ assert.deepEqual([...tabs].map(b=>b.textContent),['Môi','Mày']);
 assert.equal(panel.querySelectorAll('.service-subcategory select').length,2);
 assert.equal(panel.querySelectorAll('.service-subcategory select')[0].querySelectorAll('option').length,8);
 assert.equal(panel.querySelectorAll('.service-subcategory select')[1].querySelectorAll('option').length,9);
+const lipTech=panel.querySelectorAll('.service-subcategory select')[0];
+const events=[];panel.addEventListener('faceform:technology',event=>events.push(event.detail));
+lipTech.value='1';lipTech.dispatchEvent(new document.defaultView.Event('change'));
+assert.equal(panel.querySelector('#cosmetic-service-0 .technology-editor').hidden,true);
+assert.equal(panel.querySelector('#cosmetic-service-0 .technology-heading').textContent,'Phun môi MagnumLips');
+assert.equal(events.at(-1).area,'lips');assert.equal(events.at(-1).technology,1);
+assert.equal(events.at(-1).supported,false);
+lipTech.value='0';lipTech.dispatchEvent(new document.defaultView.Event('change'));
+assert.equal(panel.querySelector('#cosmetic-service-0 .technology-editor').hidden,false);
+assert.equal(events.at(-1).supported,true);
+
 assert.equal(panel.dataset.activeService,'lips');
 assert.equal(panel.querySelector('#cosmetic-service-0').hidden,false);
 assert.equal(panel.querySelector('#cosmetic-service-1').hidden,true);
