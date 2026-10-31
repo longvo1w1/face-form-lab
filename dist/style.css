@@ -67,3 +67,29 @@ footer{border-top:1px solid var(--line);margin-top:28px;color:#897970}footer b{c
 @media(max-width:900px){.workspace{grid-template-columns:minmax(0,1fr)}.capture,.controls{border:0}.capture{border-bottom:1px solid var(--line)}.viewer{grid-row:2}.controls{border-top:1px solid var(--line)}#stage{height:480px}.heading{margin-bottom:26px}}
 @media(max-width:760px){header{height:70px;padding:0 18px}.brand{font-size:14px;letter-spacing:2px}.brand small{display:none}.pill{font-size:8px;padding:9px}main{padding:25px 13px}.heading{display:block}.heading h1{font-size:36px;letter-spacing:-.8px}.heading>p{display:block;font-size:12px;margin:16px 0 0}.workspace{border-radius:14px}.capture,.controls{padding:20px 16px}.viewer-top{padding:20px 18px}#stage{height:390px}.viewer>.cosmetics{margin:12px;padding:16px}.viewer>.cosmetics>h3{font-size:22px}.cosmetic-services{position:sticky;top:0;z-index:4;background:#f7f1ec;padding:5px}.angles{flex-wrap:wrap}.angles button{flex:1;min-width:85px}footer{padding:18px 2px}.native-pick{min-height:44px}.cosmetics select{font-size:13px}.technology-editor,.magnum-controls,.collagen-controls,.pigmentation-controls{padding:14px 0}}
 @media(prefers-reduced-motion:reduce){button,.native-pick{transition:none}}
+
+
+/* Face Form refined editorial typography, Vietnamese-complete Google Fonts (OFL).
+   Brand headings: Playfair Display. UI/controls: Be Vietnam Pro.
+   System fallbacks remain available when font CDN is unreachable. */
+:root{--font-editorial:"Playfair Display",Georgia,serif;--font-interface:"Be Vietnam Pro",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-family:var(--font-interface)}
+body,button,input,select,textarea,output,summary,label{font-family:var(--font-interface)}
+body{font-size:13px;line-height:1.65;font-weight:400;letter-spacing:-.008em}
+h1,h2,h3,h4,p{overflow-wrap:break-word}
+.heading h1{font-family:var(--font-editorial);font-size:clamp(38px,4.3vw,68px);line-height:1.25;font-weight:500;letter-spacing:-.025em}
+.heading h1 em{font-family:var(--font-editorial);font-weight:400;letter-spacing:-.025em}
+.heading>p{font-size:13px;line-height:1.95}
+.brand{font-family:var(--font-interface);font-size:15px;font-weight:600;letter-spacing:.17em}.brand small{font-family:var(--font-interface);letter-spacing:.16em}
+.mark{font-family:var(--font-editorial);font-weight:500;font-size:32px}
+.eyebrow,.pill,.note span{font-family:var(--font-interface);font-size:10px;font-weight:600;letter-spacing:.16em;line-height:1.65}
+.section-title h2,.viewer>.cosmetics>h3,.group h3,.technology-heading,.magnum-controls h4,.collagen-controls h4,.pigmentation-controls h4,#empty h3,#cameraPlaceholder p{font-family:var(--font-editorial);font-weight:500;letter-spacing:-.018em;line-height:1.35}
+.section-title h2{font-size:20px}.viewer>.cosmetics>h3{font-size:27px}.technology-heading{font-size:22px}
+#empty h3{font-size:32px;line-height:1.35}.group h3{font-size:22px}
+button,.native-pick,.field,select,.cosmetics label,.cosmetics summary{font-family:var(--font-interface);font-size:12px;line-height:1.55;letter-spacing:0;font-weight:500}
+button{font-size:12px}.cosmetic-services button{font-weight:600;font-size:14px;letter-spacing:.01em}
+.muted,.caption,.capture-hint,#status,.brow-studio-help,.technology-status,.note p{font-family:var(--font-interface);font-size:12px;line-height:1.8;font-weight:400;letter-spacing:0}
+.cosmetics label{font-size:12px}.cosmetics select,select{font-size:12px}
+.range-label{font-family:var(--font-interface);font-size:12px;line-height:1.5}
+.range-label output{font-weight:600;font-variant-numeric:tabular-nums}
+footer{font-size:11px;line-height:1.85}
+@media(max-width:760px){.heading h1{font-size:clamp(34px,9vw,46px);line-height:1.27}.heading>p{font-size:12px}.viewer>.cosmetics>h3{font-size:24px}.technology-heading{font-size:21px}button,.native-pick,select,.cosmetics select{font-size:13px}.muted,.caption,.capture-hint,#status{font-size:12px}}
