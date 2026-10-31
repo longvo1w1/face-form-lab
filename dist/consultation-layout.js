@@ -59,6 +59,7 @@ export function prioritizeCosmetics(root=document){
   const stateLabel=document.createElement('p');stateLabel.className='technology-status';
   title.append(selectInput);wrapper.append(title,heading,stateLabel,hint);
   summary.after(wrapper,editor);
+  if(index===0){const magnum=panel.querySelector('.magnum-controls');if(magnum)section.append(magnum)}
   function choose(){
    const item=catalog[index].items[Number(selectInput.value)]||catalog[index].items[0];
    editor.hidden=index===0?Number(selectInput.value)!==0:!item[2];
