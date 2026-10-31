@@ -90,7 +90,7 @@ document.querySelector('#cosmetics').addEventListener('faceform:technology',even
  }else{
    if(!pausedLipEffect)pausedLipEffect=clone(cosmetics.lips);
    cosmetics.lips.enabled=false;
-   cosmetics.magnum.enabled=technology===1?cosmetics.magnum.enabled:false;
+   cosmetics.magnum.enabled=technology===1;
  }
  cosmeticPanel?.sync();refreshCosmetics();
 });
