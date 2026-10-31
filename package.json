@@ -13,7 +13,7 @@
     "test": "npm run test:unit && node tests/browser.mjs && node tests/guided-browser.mjs",
     "deploy:pages": "npm run setup && npm run check && wrangler pages deploy dist --project-name face-form-lab --branch main",
     "check:deployment": "node scripts/check-deployment.mjs",
-    "test:unit": "node tests/face-surface.mjs && node tests/capture-quality.mjs && node tests/capture-framing.mjs && node tests/reconstruction.mjs && node tests/cosmetics.mjs && node tests/brow-templates.mjs && node tests/brow-panel.mjs && node tests/brow-studio.mjs",
+    "test:unit": "node tests/face-surface.mjs && node tests/capture-quality.mjs && node tests/capture-framing.mjs && node tests/reconstruction.mjs && node tests/cosmetics.mjs && node tests/brow-templates.mjs && node tests/brow-panel.mjs && node tests/brow-studio.mjs && node tests/brow-clarity.mjs",
     "postinstall": "node scripts/prepare-assets.mjs",
     "build": "npm run setup && npm run check"
   },
