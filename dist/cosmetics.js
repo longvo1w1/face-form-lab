@@ -1,11 +1,12 @@
 import {applyBrowTemplates} from './brow-templates.js';
 import {applyMagnumLips,freshMagnum} from './magnum-lips.js';
 import {applyCollagenLips,freshCollagen} from './collagen-lips.js';
+import {applyPigmentPreview,freshPigmentPreview} from './lip-pigmentation.js';
 // Original implementation. All coordinates live in source-photo UV space.
 export const LIP_OUTER=[61,185,40,39,37,0,267,269,270,409,291,375,321,405,314,17,84,181,91,146];
 export const LIP_INNER=[78,191,80,81,82,13,312,311,310,415,308,324,318,402,317,14,87,178,88,95];
 export const PALETTE=[['Hồng đào','#c7767f'],['Hồng đất','#a55c69'],['Cam đào','#cf836a'],['Cam đỏ','#bb554c'],['Đỏ hồng','#b64b69'],['Đỏ đất','#965451']];
-export const freshCosmetics=()=>({magnum:freshMagnum(),collagen:freshCollagen(),lips:{enabled:false,color:'#c7767f',opacity:45,upper:100,lower:100,feather:25},brows:{enabled:false,color:'#594236',opacity:95,clarity:'defined',guide:true,mode:'overlay',fade:35,style:'strokes',preset:'soft',linked:true,outline:false,left:{thickness:100,length:100,arch:0,x:0,y:0,rotation:0},right:{thickness:100,length:100,arch:0,x:0,y:0,rotation:0}}});
+export const freshCosmetics=()=>({magnum:freshMagnum(),collagen:freshCollagen(),pigmentation:freshPigmentPreview(),lips:{enabled:false,color:'#c7767f',opacity:45,upper:100,lower:100,feather:25},brows:{enabled:false,color:'#594236',opacity:95,clarity:'defined',guide:true,mode:'overlay',fade:35,style:'strokes',preset:'soft',linked:true,outline:false,left:{thickness:100,length:100,arch:0,x:0,y:0,rotation:0},right:{thickness:100,length:100,arch:0,x:0,y:0,rotation:0}}});
 export const clone=value=>JSON.parse(JSON.stringify(value));
 export function inside(x,y,poly){let yes=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if((a.y>y)!==(b.y>y)&&x<(b.x-a.x)*(y-a.y)/(b.y-a.y)+a.x)yes=!yes}return yes}
 function distance(x,y,poly){let d=Infinity;for(let i=0;i<poly.length;i++){const a=poly[i],b=poly[(i+1)%poly.length],dx=b.x-a.x,dy=b.y-a.y,t=Math.max(0,Math.min(1,((x-a.x)*dx+(y-a.y)*dy)/(dx*dx+dy*dy||1)));d=Math.min(d,Math.hypot(x-a.x-t*dx,y-a.y-t*dy))}return d}
@@ -28,6 +29,7 @@ export function applyCosmetics(image,points,state){
  paint(image,outer,rgb(state.lips.color),state.lips.opacity/100,(x,y)=>{const a=points[61],b=points[291],line=a.y+(b.y-a.y)*(x-a.x)/(b.x-a.x||1);return lipAlpha(x,y,outer,inner,f)*(y<line?state.lips.upper:state.lips.lower)/100});}
  if(state.magnum?.enabled)applyMagnumLips(image,points,state.magnum);
  if(state.collagen?.enabled)applyCollagenLips(image,points,state.collagen);
+ if(state.pigmentation?.enabled)applyPigmentPreview(image,points,state.pigmentation);
  if(state.brows.enabled)applyBrowTemplates(image,points,state.brows);
  return image;
 }
