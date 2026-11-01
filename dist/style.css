@@ -93,3 +93,71 @@ button{font-size:12px}.cosmetic-services button{font-weight:600;font-size:14px;l
 .range-label output{font-weight:600;font-variant-numeric:tabular-nums}
 footer{font-size:11px;line-height:1.85}
 @media(max-width:760px){.heading h1{font-size:clamp(34px,9vw,46px);line-height:1.27}.heading>p{font-size:12px}.viewer>.cosmetics>h3{font-size:24px}.technology-heading{font-size:21px}button,.native-pick,select,.cosmetics select{font-size:13px}.muted,.caption,.capture-hint,#status{font-size:12px}}
+
+
+/* Atelier 2.0: immersive mirror layout, informed by premium editorial retail patterns. */
+:root{--atelier-dark:#201b1b;--atelier-wine:#633f45;--atelier-metal:#a68b72;--atelier-paper:#f8f4ef;--atelier-ivory:#fffdfa}
+body{background:#f6f1eb;color:var(--atelier-dark)}
+header{height:78px;border-color:#e2d8cf;background:#fbf8f3;position:relative;z-index:3}
+.brand{font-weight:500;letter-spacing:.23em}.mark{background:#241f1e;box-shadow:inset 0 0 0 1px #c1aa98}
+.pill{border:0;border-bottom:1px solid #baa38f;border-radius:0;letter-spacing:.2em;color:#675148;background:transparent;padding-inline:2px}
+main{max-width:1840px;padding-top:46px}
+.heading{align-items:flex-end;min-height:188px;margin-bottom:34px;padding:0 8px}
+.heading .eyebrow{color:#9b7c6f;letter-spacing:.3em;font-size:10px}
+.heading h1{font:400 clamp(58px,6.4vw,108px)/.99 var(--font-editorial);letter-spacing:-.065em;margin:16px 0 14px}
+.heading h1 em{color:#76545a;letter-spacing:-.065em}
+.heading-vietnamese{margin:0;color:#7e6e69;font:400 13px/1.8 var(--font-interface)}
+.heading-aside{max-width:310px;align-self:end;padding-bottom:11px;border-top:1px solid #bda99a}
+.heading-aside .heading-number{display:block;margin-top:10px;font:500 10px var(--font-interface);letter-spacing:.24em;color:#a68b72}
+.heading-aside p{font:400 12px/1.9 var(--font-interface);color:#806e66;margin:13px 0 0}
+.workspace{grid-template-columns:minmax(235px,275px) minmax(450px,1fr) minmax(210px,245px);gap:0;border-radius:0;border-color:#e3d9cf;box-shadow:0 30px 90px rgba(48,32,23,.08);background:#fffdfa}
+.capture,.controls{padding:29px 22px;background:#fffdfa}
+.capture{border-right:1px solid #e9dfd6}
+.controls{border-left:1px solid #e9dfd6}
+.section-title{gap:13px;border-bottom:1px solid #e8ded4;padding-bottom:16px;margin-bottom:16px}
+.section-title span{font:400 13px var(--font-interface);color:#a98c78}
+.section-title h2{font:500 18px/1.35 var(--font-editorial);color:#382e2c}
+.capture .muted{font-size:11px}
+.viewer{background:#e9dfd8;box-shadow:inset 0 0 100px #4c35300c}
+.viewer-top{background:#252020;color:#f6ebe2;min-height:86px;padding:19px 29px;display:flex;align-items:center}
+.mirror-identity{display:flex;flex-direction:column;gap:3px}
+.viewer-top .eyebrow{color:#dac1aa;letter-spacing:.27em;font-size:10px}
+.mirror-caption{font:400 12px/1.7 var(--font-interface);color:#a99a91}
+.viewer-top button{background:transparent;border-color:#77675f;color:#f3e8df;font-size:11px;padding-inline:15px}
+.viewer-top button:hover:not(:disabled){background:#443533;color:white}
+#stage{height:min(66vw,630px);min-height:450px;background:radial-gradient(ellipse at 50% 35%,#f6eee6 0%,#e8ded5 52%,#d4c7bc 100%);overflow:hidden}
+#stage::before{content:"";pointer-events:none;position:absolute;inset:18px;border:1px solid #9d857433;z-index:0}
+#stage canvas{position:relative;z-index:1}
+.stage-corner{position:absolute;width:26px;height:26px;z-index:2;pointer-events:none;border-color:#b49c86;opacity:.7}
+.stage-corner--tl{top:18px;left:18px;border-top:1px solid;border-left:1px solid}
+.stage-corner--tr{top:18px;right:18px;border-top:1px solid;border-right:1px solid}
+.stage-corner--bl{bottom:18px;left:18px;border-bottom:1px solid;border-left:1px solid}
+.stage-corner--br{bottom:18px;right:18px;border-bottom:1px solid;border-right:1px solid}
+#empty{z-index:2;padding:30px}
+#empty .orb{background:radial-gradient(ellipse at 38% 22%,#fff9f1,#d9bcb5 65%,#baa49a);border-color:#c9ada0;box-shadow:16px 20px 55px #7f62512c,inset -15px -9px 30px #85695c55}
+.empty-overline{letter-spacing:.25em;font-size:10px!important;color:#947768!important;margin:22px 0 0}
+#empty h3{font:400 clamp(30px,3.2vw,48px)/1.16 var(--font-editorial);letter-spacing:-.03em;color:#453735;margin:14px 0}
+#empty h3 em{font-weight:400;color:#7d5962}
+#empty>p:last-child{font-size:12px}
+.angles{background:#f7f3ef;padding:16px 20px 12px;gap:10px}
+.angles button{border:0;border-bottom:1px solid #d8c9bf;border-radius:0;background:transparent;padding:10px 16px}
+.angles button.active{background:transparent;color:#402e2c;border-color:#6c4c4b;box-shadow:0 2px 0 #6c4c4b}
+.viewer-bottom{background:#f7f3ef;margin:0;gap:10px;padding:12px 25px 19px}
+.viewer-bottom button{background:#fffdfa;border:1px solid #d9c9be;border-radius:3px;min-height:46px;padding:11px 18px;font-size:12px}
+.viewer-bottom #export{background:#362a29;color:#f8f1e9;border-color:#362a29}
+.viewer-bottom #export:hover:not(:disabled){background:#65474a;color:white}
+.viewer .caption{background:#f7f3ef;margin:0;padding:0 20px 18px;color:#86776e}
+.viewer>.cosmetics{margin:0;padding:30px 27px;background:#fffdfa;border:0;border-top:1px solid #e3d7cb;border-radius:0;box-shadow:none}
+.viewer>.cosmetics>h3{font:400 30px/1.25 var(--font-editorial);letter-spacing:-.03em}
+.cosmetic-services{border-radius:0;border:0;border-bottom:1px solid #cdbdb1;background:transparent;padding:0;gap:26px;margin:19px 0}
+.cosmetic-services button{border:0;border-bottom:2px solid transparent;border-radius:0;padding:14px 6px;background:transparent;font-size:15px;font-weight:500;min-height:49px}
+.cosmetic-services button[aria-pressed=true]{background:transparent;color:#39292b;border-color:#76535a}
+.service-subcategory{border-radius:0;border:0;background:#f8f3ee;border-left:2px solid #b69c88;padding:18px}
+.technology-heading{font:400 24px/1.3 var(--font-editorial);letter-spacing:-.025em}
+.cosmetics input[type=range]{accent-color:#795960}
+#cameraBox{background:#ede2da}
+.native-pick{border-radius:3px}.native-pick.primary,.primary{background:#342728;border-color:#342728;border-radius:3px}
+@media(max-width:1300px){.workspace{grid-template-columns:230px minmax(375px,1fr) 220px}.capture,.controls{padding:20px 16px}.viewer>.cosmetics{padding:24px}#stage{height:500px;min-height:0}}
+@media(max-width:990px){.workspace{grid-template-columns:minmax(0,1fr)}.capture,.controls{border:0}.capture{border-bottom:1px solid #e6dace}.viewer{grid-row:2}.controls{border-top:1px solid #e6dace}#stage{height:490px}.heading{min-height:0}.heading h1{font-size:clamp(55px,8vw,78px)}}
+@media(max-width:760px){header{height:68px}.heading{padding:0 3px;margin-bottom:25px}.heading h1{font-size:clamp(52px,12.5vw,74px);line-height:1.04}.heading-aside{display:none}.heading-vietnamese{font-size:12px}.workspace{border-radius:0}.capture{padding:22px 18px}.viewer-top{min-height:74px;padding:16px 18px}.mirror-caption{font-size:10px}.viewer-top button{font-size:10px;padding:9px}#stage{height:440px;min-height:0}.stage-corner{width:18px;height:18px}.viewer>.cosmetics{padding:24px 17px}.viewer>.cosmetics>h3{font-size:27px}.cosmetic-services{position:sticky;top:0;background:#fffdfa;z-index:4;gap:16px}.cosmetic-services button{font-size:15px}.viewer-bottom{padding-inline:12px}.viewer-bottom button{font-size:11px;padding-inline:10px;flex:1}#empty h3{font-size:36px}.angles{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start}.angles button{white-space:nowrap;min-width:max-content}}
+@media(max-width:390px){.brand{letter-spacing:.12em;font-size:12px}.pill{font-size:7px}#stage{height:390px}.heading h1{font-size:49px}}
