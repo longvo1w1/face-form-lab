@@ -12,8 +12,10 @@ const width=100,height=50;
 const data=new Uint8ClampedArray(width*height*4);
 for(let i=0;i<data.length;i+=4){data[i]=35;data[i+1]=35;data[i+2]=35;data[i+3]=255}
 for(let y=0;y<15;y++)for(let x=0;x<width;x++){let k=(y*width+x)*4;data[k]=205;data[k+1]=165;data[k+2]=140}
-const image={width,height,data};const frame={src:[{x:20,y:20},{x:30,y:20},{x:40,y:20},{x:50,y:20},{x:60,y:20}],naturalWidth:40};
+const image={width,height,data};const frame={src:[{x:20,y:20},{x:30,y:20},{x:40,y:20},{x:50,y:20},{x:60,y:20}],naturalWidth:40,span:40,cx:40,cy:20,angle:0};
 fadeOriginal(image,frame,100);
 assert(data.some(v=>v===35),'replacement must retain original pixels');
 assert(image.data[(20*width+40)*4]<205,'concealment must not overwrite brow with flat skin at full strength');
+assert.equal(image.data[(35*width+40)*4],35,'skin away from brow must remain untouched');
+assert.equal(image.data[(20*width+10)*4],35,'outside tail must remain untouched');
 console.log('PASS defaults, visible strand coverage and bounded brow concealment');
